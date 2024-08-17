@@ -27,9 +27,9 @@ class StackFullError(StackError):
 class Stack(ABC):
 
     def __init__(self, size: int):
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise StackInvalidSizeError(
-                f"Invalid stack size argument: {size}. Should be larger than 0."
+                f"Invalid stack size argument: {size}. Should be an integer and larger than 0."
             )
 
         self._allocated_size = size

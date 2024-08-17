@@ -55,8 +55,10 @@ class TestStackList(unittest.TestCase):
 class TestStackLinkedList(unittest.TestCase):
 
     def test_invalid_size_error(self):
-        with self.assertRaises(StackInvalidSizeError):
-            stack = StackLinkedList(0)
+        invalid_sizes = (-1, 0, 1.1, "2")
+        for s in invalid_sizes:
+            with self.assertRaises(StackInvalidSizeError, msg=f"Input: {s}"):
+                StackLinkedList(s)
 
     def test_head_is_none(self):
         stack = StackLinkedList(10)
