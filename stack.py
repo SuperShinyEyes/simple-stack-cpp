@@ -210,9 +210,9 @@ class StackLinkedList(Stack):
 
         return value
 
-    def push(self, x) -> None:
+    def push(self, x: object) -> None:
         super().push(x)
-        x = Node(x, previous=self._stack)
+        node = Node(x, previous=self._stack)
         if self._is_empty:
-            self._head = x
-        self._stack = x
+            self._head = node
+        self._stack = node
