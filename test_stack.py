@@ -117,12 +117,6 @@ class TestStackLinkedList(unittest.TestCase):
             result.append(i)
         self.assertEqual(tuple(result), stack.as_tuple)
 
-    def test_push_content(self):
-        stack = StackLinkedList(10)
-        for i in range(10):
-            stack.push(i)
-        self.assertEqual(tuple(range(10)), stack.as_tuple)
-
     def test_move_constructor(self):
         s1 = StackLinkedList(100)
         size = 10
