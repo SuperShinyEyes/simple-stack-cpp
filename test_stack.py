@@ -58,6 +58,14 @@ class TestStackLinkedList(unittest.TestCase):
         with self.assertRaises(StackInvalidSizeError):
             stack = StackLinkedList(0)
 
+    def test_head_is_none(self):
+        stack = StackLinkedList(10)
+        self.assertIsNone(stack._head)
+
+    def test_stack_is_none(self):
+        stack = StackLinkedList(10)
+        self.assertIsNone(stack._stack)
+
     def test_pop_error(self):
         stack = StackLinkedList(3)
         with self.assertRaises(StackEmptyError):
@@ -79,6 +87,20 @@ class TestStackLinkedList(unittest.TestCase):
 
         self.assertEqual(s1, s2)
 
+    def test_is_full(self):
+        size = 10
+        s1 = StackLinkedList(size)
+        for i in range(size):
+            s1.push(i)
+
+        self.assertTrue(s1._is_full)
+
+    def test_is_empty(self):
+        size = 10
+        s1 = StackLinkedList(size)
+
+        self.assertTrue(s1._is_empty)
+
     def test_not_equal(self):
         s1 = StackLinkedList(100)
         s2 = StackLinkedList(100)
@@ -97,19 +119,46 @@ class TestStackLinkedList(unittest.TestCase):
             for i in range(10):
                 stack.push(i)
 
+    def test_push_one(self):
+        stack = StackLinkedList(10)
+        for i in range(1):
+            stack.push(i)
+            self.assertTrue(len(stack) == i + 1)
+        self.assertIsNotNone(stack._stack)
+        self.assertIsNotNone(stack._head)
+
+    def test_push_one_head_stack_is_same(self):
+        stack = StackLinkedList(10)
+        for i in range(1):
+            stack.push(i)
+            self.assertTrue(len(stack) == i + 1)
+        self.assertIs(stack._head, stack._stack)
+
     def test_push(self):
         stack = StackLinkedList(10)
         for i in range(10):
             stack.push(i)
             self.assertTrue(len(stack) == i + 1)
 
+    def test_push_head_stack_is_not_same(self):
+        stack = StackLinkedList(10)
+        for i in range(10):
+            stack.push(i)
+        self.assertIsNot(stack._head, stack._stack)
+
     def test_pop(self):
         stack = StackLinkedList(3)
+        pushed = []
+        popped = []
         for i in range(3):
             stack.push(i)
+            pushed.append(i)
         for i in range(3):
-            stack.pop()
+            popped.append(stack.pop())
+        self.assertEqual(pushed, list(reversed(popped)))
         self.assertTrue(stack._is_empty)
+        self.assertIsNone(stack._head)
+        self.assertIsNone(stack._stack)
 
     def test_pop_tail_next_is_none(self):
         stack = StackLinkedList(3)
@@ -151,7 +200,7 @@ class TestStackLinkedList(unittest.TestCase):
 
         self.assertIsNone(s1._stack)
         self.assertIsNone(s1._head)
-        self.assertEqual(0, len(s1))
+        self.assertTrue(s1._is_empty)
 
     def test_copy_constructor(self):
         s1 = StackLinkedList(100)

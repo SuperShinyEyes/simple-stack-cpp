@@ -129,6 +129,8 @@ class Node(object):
         self.value = x
         self.previous: Optional["Node"] = previous
         self.next: Optional["Node"] = None
+        if previous is not None:
+            previous.next = self
 
 
 class StackLinkedList(Stack):
@@ -209,10 +211,7 @@ class StackLinkedList(Stack):
 
     def push(self, x):
         super().push(x)
-        x = Node(x)
+        x = Node(x, previous=self._stack)
         if self._is_empty:
             self._head = x
-        else:
-            x.previous = self._stack
-            self._stack.next = x
         self._stack = x
