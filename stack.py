@@ -44,10 +44,6 @@ class Stack(ABC):
     def move_constructor(cls, other):
         pass
 
-    @property
-    def allocated_size(self) -> int:
-        return self._allocated_size
-
     @abstractmethod
     def __len__(self) -> int:
         pass
@@ -55,6 +51,18 @@ class Stack(ABC):
     @abstractmethod
     def __eq__(self) -> int:
         pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def __del__(self):
+        pass
+
+    @property
+    def allocated_size(self) -> int:
+        return self._allocated_size
 
     @property
     def _is_full(self) -> bool:
@@ -74,13 +82,6 @@ class Stack(ABC):
             raise StackFullError(
                 f"You can't push to a full stack. The size of the stack is {self._allocated_size}"
             )
-
-    def __str__(self) -> str:
-        return f"Stack size: {self.allocated_size}."
-
-    @abstractmethod
-    def __del__(self):
-        pass
 
 
 class StackList(Stack):
@@ -107,6 +108,13 @@ class StackList(Stack):
     def __eq__(self, other: "StackList") -> bool:
         return self._stack == other._stack
 
+    def __str__(self) -> str:
+        return f"Stack size: {self.allocated_size}. {self._stack}"
+
+    def __del__(self):
+        if hasattr(self, "_stack"):
+            del self._stack
+
     def pop(self):
         super().pop()
         return self._stack.pop()
@@ -114,13 +122,6 @@ class StackList(Stack):
     def push(self, x):
         super().push(x)
         self._stack.append(x)
-
-    def __str__(self) -> str:
-        return f"Stack size: {self.allocated_size}. {self._stack}"
-
-    def __del__(self):
-        if hasattr(self, "_stack"):
-            del self._stack
 
 
 class Node(object):
@@ -156,19 +157,13 @@ class StackLinkedList(Stack):
         other._head = other._stack = None
         return new_stack
 
-    @property
-    def as_tuple(self) -> Tuple:
-        result = []
-        node: Optional[Node] = self._head
-        while node is not None:
-            result.append(node.value)
-            node = node.next
-        return tuple(result)
-
     def __len__(self) -> int:
         return len(tuple(_ for _ in self))
 
     def __eq__(self, other: "StackLinkedList") -> bool:
+        if len(self) != len(other):
+            return False
+
         n1: Optional[Node]
         n2: Optional[Node]
         for n1, n2 in zip(self, other):
@@ -182,6 +177,24 @@ class StackLinkedList(Stack):
         while node is not None:
             yield node
             node = node.next
+
+    def __str__(self) -> str:
+        return f"Stack size: {self.allocated_size}. {self.as_tuple}"
+
+    def __del__(self):
+        if hasattr(self, "_stack"):
+            del self._stack
+        if hasattr(self, "_head"):
+            del self._head
+
+    @property
+    def as_tuple(self) -> Tuple:
+        result = []
+        node: Optional[Node] = self._head
+        while node is not None:
+            result.append(node.value)
+            node = node.next
+        return tuple(result)
 
     def pop(self):
         super().pop()
@@ -203,12 +216,3 @@ class StackLinkedList(Stack):
             x.previous = self._stack
             self._stack.next = x
         self._stack = x
-
-    def __str__(self) -> str:
-        return f"Stack size: {self.allocated_size}. {self._stack}"
-
-    def __del__(self):
-        if hasattr(self, "_stack"):
-            del self._stack
-        if hasattr(self, "_head"):
-            del self._head

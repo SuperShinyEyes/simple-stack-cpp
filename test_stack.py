@@ -69,6 +69,28 @@ class TestStackLinkedList(unittest.TestCase):
             stack.push(i)
             self.assertEqual(i + 1, len(stack))
 
+    def test_equal(self):
+        s1 = StackLinkedList(100)
+        s2 = StackLinkedList(100)
+        size = 10
+        for i in range(size):
+            s1.push(i)
+            s2.push(i)
+
+        self.assertEqual(s1, s2)
+
+    def test_not_equal(self):
+        s1 = StackLinkedList(100)
+        s2 = StackLinkedList(100)
+        size = 10
+        for i in range(size):
+            s1.push(i)
+
+        for i in range(size - 1):
+            s2.push(i)
+
+        self.assertNotEqual(s1, s2)
+
     def test_push_error(self):
         stack = StackLinkedList(3)
         with self.assertRaises(StackFullError):
