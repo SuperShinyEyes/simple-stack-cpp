@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Generator, List
 
 
 class StackError(Exception):
@@ -57,7 +57,7 @@ class Stack(ABC):
         pass
 
     @abstractmethod
-    def __del__(self):
+    def __del__(self) -> None:
         pass
 
     @property
@@ -73,11 +73,12 @@ class Stack(ABC):
         return len(self) == 0
 
     @abstractmethod
-    def pop(self):
+    def pop(self) -> object:
         if self._is_empty:
             raise StackEmptyError("You can't pop an empty stack.")
 
-    def push(self, x):
+    @abstractmethod
+    def push(self, x) -> None:
         if self._is_full:
             raise StackFullError(
                 f"You can't push to a full stack. The size of the stack is {self._allocated_size}"
@@ -87,7 +88,7 @@ class Stack(ABC):
 class StackList(Stack):
     def __init__(self, size: int):
         super().__init__(size)
-        self._stack = []
+        self._stack: List[object] = []
 
     @classmethod
     def copy_constructor(cls, other: "StackList"):
@@ -96,7 +97,7 @@ class StackList(Stack):
         return new_stack
 
     @classmethod
-    def move_constructor(cls, other):
+    def move_constructor(cls, other: "StackList"):
         new_stack = cls(other.allocated_size)
         new_stack._stack = other._stack
         other._stack = None
@@ -111,22 +112,22 @@ class StackList(Stack):
     def __str__(self) -> str:
         return f"Stack size: {self.allocated_size}. {self._stack}"
 
-    def __del__(self):
+    def __del__(self) -> None:
         if hasattr(self, "_stack"):
             del self._stack
 
-    def pop(self):
+    def pop(self) -> object:
         super().pop()
         return self._stack.pop()
 
-    def push(self, x):
+    def push(self, x) -> None:
         super().push(x)
         self._stack.append(x)
 
 
 class Node(object):
-    def __init__(self, x, previous: Optional["Node"] = None) -> None:
-        self.value = x
+    def __init__(self, x: object, previous: Optional["Node"] = None) -> None:
+        self.value: object = x
         self.previous: Optional["Node"] = previous
         self.next: Optional["Node"] = None
         if previous is not None:
@@ -140,7 +141,7 @@ class StackLinkedList(Stack):
         self._head: Optional["Node"] = None
 
     @classmethod
-    def copy_constructor(cls, other: "StackLinkedList"):
+    def copy_constructor(cls, other: "StackLinkedList") -> "StackLinkedList":
         new_stack: "StackLinkedList" = cls(other.allocated_size)
         node: Optional[Node] = other._head
         while node is not None:
@@ -174,7 +175,7 @@ class StackLinkedList(Stack):
         else:
             return True
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[Node, None, None]:
         node: Optional[Node] = self._head
         while node is not None:
             yield node
@@ -183,7 +184,7 @@ class StackLinkedList(Stack):
     def __str__(self) -> str:
         return f"Stack size: {self.allocated_size}. {self.as_tuple}"
 
-    def __del__(self):
+    def __del__(self) -> None:
         if hasattr(self, "_stack"):
             del self._stack
         if hasattr(self, "_head"):
@@ -198,9 +199,9 @@ class StackLinkedList(Stack):
             node = node.next
         return tuple(result)
 
-    def pop(self):
+    def pop(self) -> object:
         super().pop()
-        value = self._stack.value
+        value: object = self._stack.value
         if self._head is self._stack:
             self._head = self._stack = None
         else:
@@ -209,7 +210,7 @@ class StackLinkedList(Stack):
 
         return value
 
-    def push(self, x):
+    def push(self, x) -> None:
         super().push(x)
         x = Node(x, previous=self._stack)
         if self._is_empty:
