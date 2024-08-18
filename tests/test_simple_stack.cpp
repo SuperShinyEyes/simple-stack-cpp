@@ -14,6 +14,14 @@ TEST(StackListTest, HandlesConstructor) {
     EXPECT_EQ(stack.get_size(), 10);
 }
 
+TEST(StackListTest, HandlesPushPop) {
+    StackList<int> stack(10);
+    int pushed = 10;
+    stack.push(pushed);
+    int popped = stack.pop(); 
+    EXPECT_EQ(pushed, popped);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
