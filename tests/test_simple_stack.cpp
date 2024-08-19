@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "simple_stack.h"
+#include <vector>
 
 TEST(AdditionTest, HandlesPositiveInput) {
     EXPECT_EQ(add(1, 2), 3);
@@ -20,6 +21,20 @@ TEST(StackListTest, HandlesPushPop) {
     stack.push(pushed);
     int popped = stack.pop(); 
     EXPECT_EQ(pushed, popped);
+}
+
+TEST(StackListTest, HandlesInvalidSizeError) {
+    std::vector<int> stack_sizes = {-1000, -10, -1, 0};
+    for (int size : stack_sizes){
+        EXPECT_THROW(StackList<int> stack(size), StackInvalidSizeError);
+    }
+}
+
+TEST(StackListTest, HandlesValidSize) {
+    std::vector<int> stack_sizes = {1000, 10, 1};
+    for (int size : stack_sizes){
+        EXPECT_NO_THROW(StackList<int> stack(size));
+    }
 }
 
 int main(int argc, char **argv) {
