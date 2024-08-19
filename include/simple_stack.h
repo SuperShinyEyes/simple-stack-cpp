@@ -46,7 +46,7 @@ private:
 
 template <class T>
 class StackList {
-    int allocated_size;
+    int allocatedSize;
     T *stack;
 public:
     int index = 0;
@@ -54,29 +54,29 @@ public:
         if (size < 1) {
             throw StackInvalidSizeError("Size must be greater than 0. You gave " +std::to_string(size));
         }
-        allocated_size = size;
+        allocatedSize = size;
         stack = new T[size];
     }
 
     // Copy constructor
     StackList(const StackList &other) {
         index = other.index;
-        allocated_size = other.allocated_size;
-        stack = new T[allocated_size];
+        allocatedSize = other.allocatedSize;
+        stack = new T[allocatedSize];
 
-        for (int i = 0; i < allocated_size; i++) {
+        for (int i = 0; i < allocatedSize; i++) {
             stack[i] = other.stack[i];
         }
     }
 
     StackList(StackList &&other) noexcept {
         index = other.index;
-        allocated_size = other.allocated_size;
+        allocatedSize = other.allocatedSize;
         stack = other.stack;
         
         other.stack = nullptr;
         other.index = 0;
-        other.allocated_size = 0;
+        other.allocatedSize = 0;
     }
 
     ~StackList() {
@@ -88,7 +88,7 @@ public:
         for (int i = 0; i < index; i++) {
             ss << stack[i] << " ";
         }
-        std::cout << "Stack (size: " << allocated_size << "): " << (ss.str()) << std::endl;
+        std::cout << "Stack (size: " << allocatedSize << "): " << (ss.str()) << std::endl;
     }
 
     bool isEmpty() {
@@ -96,7 +96,7 @@ public:
     }
 
     bool isFull() {
-        return index == allocated_size;
+        return index == allocatedSize;
     }
 
     // Return and remove the top item
@@ -111,16 +111,120 @@ public:
 
     void push(T value) {
         if (isFull()) {
-            throw StackFullError("You can't push to a full stack. The size of the stack is " + std::to_string(allocated_size));
+            throw StackFullError("You can't push to a full stack. The size of the stack is " + std::to_string(allocatedSize));
         }
         *(stack + index) = value;
         index++;
     }
-    int get_size() const {
-        return allocated_size;
+    int getSize() const {
+        return allocatedSize;
     }
 
-    T* get_stack() const {
+    T* getStack() const {
+        return stack;
+    }
+};
+
+template <class T>
+class Node {
+public:
+    T *value;
+    Node *previous;
+    Node *next;
+    Node(T *value, Node *previous) : value(value), previous(previous), next(nullptr) {
+        if (previous != nullptr) {
+            previous->next = this;
+        }
+    }
+    ~Node() {
+        delete value;
+    }
+};
+
+template <class T>
+class StackLinkedList {
+    int allocatedSize;
+    Node<T> *stack;
+    Node<T> *head;
+public:
+    StackLinkedList(int size) {
+        std::cout << "Initialize!" << std::endl;
+        if (size < 1) {
+            throw StackInvalidSizeError("Size must be greater than 0. You gave " +std::to_string(size));
+        }
+        allocatedSize = size;
+        stack = nullptr;
+        head = nullptr;
+        std::cout << "Constructor ends!" << std::endl;
+    }
+
+    // Copy constructor
+    StackLinkedList(const StackLinkedList &other) {
+    }
+
+    StackLinkedList(StackLinkedList &&other) noexcept {
+    }
+
+    ~StackLinkedList() {
+        delete stack;
+        delete head;
+    }
+
+    // Return the number of nodes in a stack
+    int getLength() {
+        int size = 0;
+        Node<T> *node = head;
+        while (size < allocatedSize) {
+            if (node == nullptr) {
+                break;
+            }
+            node = node->next;
+            size++;
+        }
+        return size;
+    }
+
+    int getSize() {
+        return allocatedSize;
+    }
+
+    bool isEmpty() {
+        return head == nullptr;
+    }
+
+    bool isFull() {
+        return getSize() == allocatedSize;
+    }
+
+    // Return and remove the top item
+    T pop(){
+        if (isEmpty()) {
+            throw StackEmptyError("You can't pop an empty stack.");
+        }
+        T value = stack->value;
+
+        if (head == stack) {
+            head = nullptr;
+            stack = nullptr;
+        } else {
+            stack = stack->previous;
+            stack->next = nullptr;
+        }
+        return value;
+    }
+
+    void push(T value) {
+        if (isFull()) {
+            throw StackFullError("You can't push to a full stack. The size of the stack is " + std::to_string(allocatedSize));
+        }
+        Node<T> node = new Node<T>(new T(value), stack);
+        if (isEmpty()) {
+            head = node;
+        }
+        stack = node;
+    }
+
+    T* getStack() const {
         return stack;
     }
 };
