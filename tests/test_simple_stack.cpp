@@ -37,6 +37,23 @@ TEST(StackListTest, HandlesValidSize) {
     }
 }
 
+TEST(StackListTest, HandlesEmptyError) {
+    StackList<int> stack(10);
+    EXPECT_THROW(stack.pop(), StackEmptyError);
+    stack.push(1);
+    EXPECT_NO_THROW(stack.pop());
+    EXPECT_THROW(stack.pop(), StackEmptyError);
+}
+
+TEST(StackListTest, HandlesFullError) {
+    StackList<int> stack(10);
+    for (int i = 0; i < 10; i++) {
+        EXPECT_NO_THROW(stack.push(i));
+    }
+    EXPECT_THROW(stack.push(1), StackFullError);
+}
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
