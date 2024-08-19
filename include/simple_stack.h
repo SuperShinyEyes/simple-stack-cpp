@@ -17,6 +17,8 @@ public:
 private:
     std::string message_;
 };
+
+
 template <class T>
 class StackList {
     int allocated_size;
@@ -25,7 +27,7 @@ public:
     int index = 0;
     StackList(int size) {
         if (size < 1) {
-            throw StackInvalidSizeError("Size must be greater than 0.");
+            throw StackInvalidSizeError("Size must be greater than 0. You gave " +std::to_string(size));
         }
         allocated_size = size;
         stack = new T[size];
