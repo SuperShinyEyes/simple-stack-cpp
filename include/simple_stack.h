@@ -69,6 +69,16 @@ public:
         }
     }
 
+    StackList(StackList &&other) noexcept {
+        index = other.index;
+        allocated_size = other.allocated_size;
+        stack = other.stack;
+        
+        other.stack = nullptr;
+        other.index = 0;
+        other.allocated_size = 0;
+    }
+
     ~StackList() {
         delete[] stack;
     }
@@ -108,6 +118,10 @@ public:
     }
     int get_size() const {
         return allocated_size;
+    }
+
+    T* get_stack() const {
+        return stack;
     }
 };
 

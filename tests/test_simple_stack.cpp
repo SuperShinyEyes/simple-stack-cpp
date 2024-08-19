@@ -62,10 +62,28 @@ TEST(StackListTest, HandlesCopyConstructor) {
     }
     StackList<int> s2 = s1;
     EXPECT_EQ(s1.index, s2.index);
-    // for (int i = 0; i < 10; i++) {
-    //     EXPECT_EQ(s1.pop(), s2.pop());
-    // }
+    for (int i = 0; i < 10; i++) {
+        EXPECT_EQ(s1.pop(), s2.pop());
+    }
+}
+
+TEST(StackListTest, HandlesMoveConstructor) {
+    int size = 10;
+    StackList<int> s1(size);
+    for (int i = 0; i < size; i++) {
+        s1.push(i);
+    }
+    StackList<int> s2 = std::move(s1);
+    EXPECT_EQ(s1.index, 0);
+    EXPECT_EQ(s1.get_size(), 0);
+    EXPECT_EQ(s1.get_stack(), nullptr);
+
+    EXPECT_EQ(s2.index, size);
+    EXPECT_EQ(s2.get_size(), size);
     
+    for (int i = 9; i > -1; i--) {
+        EXPECT_EQ(i, s2.pop());
+    }
 }
 
 
