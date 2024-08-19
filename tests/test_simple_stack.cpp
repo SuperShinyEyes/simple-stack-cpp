@@ -17,10 +17,12 @@ TEST(StackListTest, HandlesConstructor) {
 
 TEST(StackListTest, HandlesPushPop) {
     StackList<int> stack(10);
-    int pushed = 10;
-    stack.push(pushed);
-    int popped = stack.pop(); 
-    EXPECT_EQ(pushed, popped);
+    int popped; 
+    for (int pushed = 0; pushed < 10; pushed++) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
 }
 
 TEST(StackListTest, HandlesInvalidSizeError) {
