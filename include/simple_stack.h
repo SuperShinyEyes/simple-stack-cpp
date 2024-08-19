@@ -128,16 +128,13 @@ public:
 template <class T>
 class Node {
 public:
-    T *value;
+    T value;
     Node *previous;
     Node *next;
-    Node(T *value, Node *previous) : value(value), previous(previous), next(nullptr) {
+    Node(T value, Node *previous) : value(value), previous(previous), next(nullptr) {
         if (previous != nullptr) {
             previous->next = this;
         }
-    }
-    ~Node() {
-        delete value;
     }
 };
 
@@ -193,7 +190,7 @@ public:
     }
 
     bool isFull() {
-        return getSize() == allocatedSize;
+        return getLength() == allocatedSize;
     }
 
     // Return and remove the top item
@@ -217,7 +214,7 @@ public:
         if (isFull()) {
             throw StackFullError("You can't push to a full stack. The size of the stack is " + std::to_string(allocatedSize));
         }
-        Node<T> node = new Node<T>(new T(value), stack);
+        Node<T> *node = new Node<T>(value, stack);
         if (isEmpty()) {
             head = node;
         }

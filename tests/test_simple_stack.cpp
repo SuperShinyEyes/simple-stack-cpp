@@ -94,15 +94,15 @@ TEST(StackLinkedListTest, HandlesConstructor) {
     EXPECT_EQ(stack.getLength(), 0);
 }
 
-// TEST(StackLinkedListTest, HandlesPushPop) {
-//     StackLinkedList<int> stack(10);
-//     int popped; 
-//     for (int pushed = 0; pushed < 10; pushed++) {
-//         stack.push(pushed);
-//         popped = stack.pop();
-//         EXPECT_EQ(pushed, popped);
-//     }
-// }
+TEST(StackLinkedListTest, HandlesPushPop) {
+    StackLinkedList<int> stack(10);
+    int popped; 
+    for (int pushed = 0; pushed < 10; pushed++) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
 
 // TEST(StackLinkedListTest, HandlesInvalidSizeError) {
 //     std::vector<int> stack_sizes = {-1000, -10, -1, 0};
