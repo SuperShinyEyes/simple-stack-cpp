@@ -55,6 +55,19 @@ TEST(StackListTest, HandlesFullError) {
     EXPECT_THROW(stack.push(1), StackFullError);
 }
 
+TEST(StackListTest, HandlesCopyConstructor) {
+    StackList<int> s1(10);
+    for (int i = 0; i < 10; i++) {
+        s1.push(i);
+    }
+    StackList<int> s2 = s1;
+    EXPECT_EQ(s1.index, s2.index);
+    // for (int i = 0; i < 10; i++) {
+    //     EXPECT_EQ(s1.pop(), s2.pop());
+    // }
+    
+}
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

@@ -1,5 +1,7 @@
 #include <exception>
 #include <string>
+#include <iostream>
+#include <sstream>
 
 #ifndef SIMPLE_STACK_H
 #define SIMPLE_STACK_H
@@ -56,9 +58,29 @@ public:
         stack = new T[size];
     }
 
-    ~StackList() {
-        delete stack;
+    // Copy constructor
+    StackList(const StackList &other) {
+        index = other.index;
+        allocated_size = other.allocated_size;
+        stack = new T[allocated_size];
+
+        for (int i = 0; i < allocated_size; i++) {
+            stack[i] = other.stack[i];
+        }
     }
+
+    ~StackList() {
+        delete[] stack;
+    }
+
+    void display() {
+        std::stringstream ss;
+        for (int i = 0; i < index; i++) {
+            ss << stack[i] << " ";
+        }
+        std::cout << "Stack (size: " << allocated_size << "): " << (ss.str()) << std::endl;
+    }
+
     bool isEmpty() {
         return index == 0;
     }
