@@ -5,10 +5,6 @@
 
 #include "simple_stack.h"
 
-TEST(AdditionTest, HandlesPositiveInput) { EXPECT_EQ(add(1, 2), 3); }
-
-TEST(AdditionTest, HandlesNegativeInput) { EXPECT_EQ(add(-1, -1), -2); }
-
 TEST(StackListTest, HandlesConstructor) {
   StackList<int> stack(10);
   EXPECT_EQ(stack.getSize(), 10);
@@ -40,10 +36,10 @@ TEST(StackListTest, HandlesValidSize) {
 
 TEST(StackListTest, HandlesEmptyError) {
   StackList<int> stack(10);
-  EXPECT_THROW(stack.pop(), StackEmptyError);
+  EXPECT_THROW(stack.pop(), StackUnderflowError);
   stack.push(1);
   EXPECT_NO_THROW(stack.pop());
-  EXPECT_THROW(stack.pop(), StackEmptyError);
+  EXPECT_THROW(stack.pop(), StackUnderflowError);
 }
 
 TEST(StackListTest, HandlesFullError) {
@@ -51,7 +47,7 @@ TEST(StackListTest, HandlesFullError) {
   for (int i = 0; i < 10; i++) {
     EXPECT_NO_THROW(stack.push(i));
   }
-  EXPECT_THROW(stack.push(1), StackFullError);
+  EXPECT_THROW(stack.push(1), StackOverflowError);
 }
 
 TEST(StackListTest, HandlesCopyConstructor) {
@@ -196,10 +192,10 @@ TEST(StackLinkedListTest, HandlesValidSize) {
 
 TEST(StackLinkedListTest, HandlesEmptyError) {
   StackLinkedList<int> stack(10);
-  EXPECT_THROW(stack.pop(), StackEmptyError);
+  EXPECT_THROW(stack.pop(), StackUnderflowError);
   stack.push(1);
   EXPECT_NO_THROW(stack.pop());
-  EXPECT_THROW(stack.pop(), StackEmptyError);
+  EXPECT_THROW(stack.pop(), StackUnderflowError);
 }
 
 TEST(StackLinkedListTest, HandlesFullError) {
@@ -207,7 +203,7 @@ TEST(StackLinkedListTest, HandlesFullError) {
   for (int i = 0; i < 10; i++) {
     EXPECT_NO_THROW(stack.push(i));
   }
-  EXPECT_THROW(stack.push(1), StackFullError);
+  EXPECT_THROW(stack.push(1), StackOverflowError);
 }
 
 TEST(StackLinkedListTest, HandlesCopyConstructor) {

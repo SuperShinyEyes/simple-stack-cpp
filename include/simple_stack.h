@@ -6,8 +6,8 @@
 #ifndef SIMPLE_STACK_H
 #define SIMPLE_STACK_H
 
-int add(int a, int b);
-
+////////////////////////////////////////////////////
+// Exceptions
 class StackInvalidSizeError : public std::exception {
  public:
   StackInvalidSizeError(const std::string &message) : message_(message) {}
@@ -20,9 +20,9 @@ class StackInvalidSizeError : public std::exception {
   std::string message_;
 };
 
-class StackEmptyError : public std::exception {
+class StackUnderflowError : public std::exception {
  public:
-  StackEmptyError(const std::string &message) : message_(message) {}
+  StackUnderflowError(const std::string &message) : message_(message) {}
 
   virtual const char *what() const noexcept override {
     return message_.c_str();
@@ -32,9 +32,9 @@ class StackEmptyError : public std::exception {
   std::string message_;
 };
 
-class StackFullError : public std::exception {
+class StackOverflowError : public std::exception {
  public:
-  StackFullError(const std::string &message) : message_(message) {}
+  StackOverflowError(const std::string &message) : message_(message) {}
 
   virtual const char *what() const noexcept override {
     return message_.c_str();
@@ -42,11 +42,23 @@ class StackFullError : public std::exception {
 
  private:
   std::string message_;
+};
+
+////////////////////////////////////////////////////
+
+// Stack Abstract Class
+template <class T>
+class Stack {
+ protected:
+  int allocatedSize;
+
+ public:
+  virtual T pop() = 0;
+  virtual void push(T value) = 0;
 };
 
 template <class T>
-class StackList {
-  int allocatedSize;
+class StackList : public Stack<T> {
   T *stack;
 
  public:
@@ -56,17 +68,17 @@ class StackList {
       throw StackInvalidSizeError("Size must be greater than 0. You gave " +
                                   std::to_string(size));
     }
-    allocatedSize = size;
+    this->allocatedSize = size;
     stack = new T[size];
   }
 
   // Copy constructor
   StackList(const StackList &other) {
     index = other.index;
-    allocatedSize = other.allocatedSize;
-    stack = new T[allocatedSize];
+    this->allocatedSize = other.allocatedSize;
+    stack = new T[this->allocatedSize];
 
-    for (int i = 0; i < allocatedSize; i++) {
+    for (int i = 0; i < this->allocatedSize; i++) {
       stack[i] = other.stack[i];
     }
   }
@@ -74,7 +86,7 @@ class StackList {
   // Move constructor
   StackList(StackList &&other) noexcept {
     index = other.index;
-    allocatedSize = other.allocatedSize;
+    this->allocatedSize = other.allocatedSize;
     stack = other.stack;
 
     other.stack = nullptr;
@@ -89,18 +101,18 @@ class StackList {
     for (int i = 0; i < index; i++) {
       ss << stack[i] << " ";
     }
-    std::cout << "Stack (size: " << allocatedSize << "): " << (ss.str())
+    std::cout << "Stack (size: " << this->allocatedSize << "): " << (ss.str())
               << std::endl;
   }
 
   bool isEmpty() { return index == 0; }
 
-  bool isFull() { return index == allocatedSize; }
+  bool isFull() { return index == this->allocatedSize; }
 
   // Return and remove the top item
-  T pop() {
+  virtual T pop() {
     if (isEmpty()) {
-      throw StackEmptyError("You can't pop an empty stack.");
+      throw StackUnderflowError("You can't pop an empty stack.");
     }
     T value = *(stack + index - 1);  // FIXME: This is
     index--;
@@ -109,14 +121,15 @@ class StackList {
 
   void push(T value) {
     if (isFull()) {
-      throw StackFullError(
-          "You can't push to a full stack. The size of the stack is " +
-          std::to_string(allocatedSize));
+      throw StackOverflowError(
+          "Stack Overflow: You can't push to a full stack. The size of the "
+          "stack is " +
+          std::to_string(this->allocatedSize));
     }
     *(stack + index) = value;
     index++;
   }
-  int getSize() const { return allocatedSize; }
+  int getSize() const { return this->allocatedSize; }
 
   T *getStack() const { return stack; }
 };
@@ -136,8 +149,7 @@ class Node {
 };
 
 template <class T>
-class StackLinkedList {
-  int allocatedSize;
+class StackLinkedList : public Stack<T> {
   Node<T> *stack;
   Node<T> *head;
 
@@ -147,14 +159,14 @@ class StackLinkedList {
       throw StackInvalidSizeError("Size must be greater than 0. You gave " +
                                   std::to_string(size));
     }
-    allocatedSize = size;
+    this->allocatedSize = size;
     stack = nullptr;
     head = nullptr;
   }
 
   // Copy constructor
   StackLinkedList(const StackLinkedList &other) {
-    allocatedSize = other.allocatedSize;
+    this->allocatedSize = other.allocatedSize;
     if (other.head == nullptr) {
       stack = nullptr;
       head = nullptr;
@@ -179,7 +191,7 @@ class StackLinkedList {
       StackLinkedList temp(other);
       // Transfer ownership of the copy-object's resources to this
       // This approach minimizes the risk of memory leaks
-      std::swap(allocatedSize, temp.allocatedSize);
+      std::swap(this->allocatedSize, temp.allocatedSize);
       std::swap(head, temp.head);
       std::swap(stack, temp.stack);
     }
@@ -188,7 +200,7 @@ class StackLinkedList {
 
   // Move constructor
   StackLinkedList(StackLinkedList &&other) noexcept {
-    allocatedSize = other.allocatedSize;
+    this->allocatedSize = other.allocatedSize;
     stack = other.stack;
     head = other.head;
 
@@ -202,7 +214,7 @@ class StackLinkedList {
     if (this != &other) {
       deleteStack();
 
-      std::swap(allocatedSize, other.allocatedSize);
+      std::swap(this->allocatedSize, other.allocatedSize);
       std::swap(head, other.head);
       std::swap(stack, other.stack);
     }
@@ -212,7 +224,7 @@ class StackLinkedList {
   ~StackLinkedList() { deleteStack(); }
 
   void deleteStack() {
-    allocatedSize = 0;
+    this->allocatedSize = 0;
     Node<T> *n1 = head;
     Node<T> *n2 = head;
     while (n1 != nullptr) {
@@ -226,7 +238,7 @@ class StackLinkedList {
   int getLength() {
     int size = 0;
     Node<T> *node = head;
-    while (size < allocatedSize) {
+    while (size < this->allocatedSize) {
       if (node == nullptr) {
         break;
       }
@@ -236,16 +248,16 @@ class StackLinkedList {
     return size;
   }
 
-  int getSize() { return allocatedSize; }
+  int getSize() { return this->allocatedSize; }
 
   bool isEmpty() { return head == nullptr; }
 
-  bool isFull() { return getLength() == allocatedSize; }
+  bool isFull() { return getLength() == this->allocatedSize; }
 
   // Return and remove the top item
   T pop() {
     if (isEmpty()) {
-      throw StackEmptyError("You can't pop an empty stack.");
+      throw StackUnderflowError("You can't pop an empty stack.");
     }
     T value = stack->value;
 
@@ -263,9 +275,9 @@ class StackLinkedList {
 
   void push(T value) {
     if (isFull()) {
-      throw StackFullError(
+      throw StackOverflowError(
           "You can't push to a full stack. The size of the stack is " +
-          std::to_string(allocatedSize));
+          std::to_string(this->allocatedSize));
     }
     Node<T> *node = new Node<T>(value, stack);
     if (isEmpty()) {
