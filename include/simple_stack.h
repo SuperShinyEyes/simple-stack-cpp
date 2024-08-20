@@ -199,11 +199,24 @@ public:
         other.allocatedSize = 0;
     }
 
+    // Move assignment operator
+    StackLinkedList& operator=(StackLinkedList &&other) noexcept {
+        if (this != &other) {
+            deleteStack();
+
+            std::swap(allocatedSize, other.allocatedSize);
+            std::swap(head, other.head);
+            std::swap(stack, other.stack);
+        }
+        return *this;
+    }
+
     ~StackLinkedList() {
         deleteStack();
     }
 
     void deleteStack() {
+        allocatedSize = 0;
         Node<T> *n1 = head;
         Node<T> *n2 = head;
         while (n1 != nullptr) {

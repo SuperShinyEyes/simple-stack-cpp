@@ -293,6 +293,27 @@ TEST(StackLinkedListTest, HandlesMoveConstructor) {
     }
 }
 
+TEST(StackLinkedListTest, HandlesMoveAssignment) {
+    int size = 10;
+    StackLinkedList<int> s1(size);
+    for (int i = 0; i < size; i++) {
+        s1.push(i);
+    }
+    StackLinkedList<int> s2(1);
+    s2 = std::move(s1);
+    EXPECT_EQ(s1.getSize(), 0);
+    EXPECT_EQ(s1.getLength(), 0);
+    EXPECT_EQ(s1.getStack(), nullptr);
+    EXPECT_EQ(s1.getHead(), nullptr);
+
+    EXPECT_EQ(s2.getSize(), size);
+    EXPECT_EQ(s2.getLength(), size);
+    
+    for (int i = 9; i > -1; i--) {
+        EXPECT_EQ(i, s2.pop());
+    }
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
