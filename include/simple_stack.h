@@ -247,8 +247,12 @@ public:
         stack = node;
     }
 
-    T* getStack() const {
+    Node<T>* getStack() const {
         return stack;
+    }
+
+    Node<T>* getHead() const {
+        return head;
     }
 };
 
