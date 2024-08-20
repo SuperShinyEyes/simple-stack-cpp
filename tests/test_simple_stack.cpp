@@ -246,6 +246,33 @@ TEST(StackLinkedListTest, HandlesCopyConstructor) {
     }
 }
 
+TEST(StackLinkedListTest, HandlesCopyAssignment) {
+    StackLinkedList<int> s1(10);
+    for (int i = 0; i < 10; i++) {
+        s1.push(i);
+    }
+    StackLinkedList<int> s2(1);
+    s2 = s1;
+    EXPECT_EQ(s1.getSize(), s2.getSize());
+    EXPECT_EQ(s1.getLength(), s2.getLength());
+
+    const Node<int> *n1 = s1.getHead();
+    const Node<int> *n2 = s2.getHead();
+    for (int i = 0; i < s1.getLength(); i++) {
+        // Memory addresses should be different 
+        EXPECT_NE(n1, n2);
+        // Values should be same
+        EXPECT_EQ(n1->value, n2->value);
+        n1 = n1->next;
+        n2 = n2->next;
+    }
+
+    for (int i = 0; i < 10; i++) {
+        // Values should be same
+        EXPECT_EQ(s1.pop(), s2.pop());
+    }
+}
+
 TEST(StackLinkedListTest, HandlesMoveConstructor) {
     int size = 10;
     StackLinkedList<int> s1(size);

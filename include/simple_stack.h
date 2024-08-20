@@ -69,6 +69,7 @@ public:
         }
     }
 
+    // Move constructor
     StackList(StackList &&other) noexcept {
         index = other.index;
         allocatedSize = other.allocatedSize;
@@ -170,6 +171,23 @@ public:
         }
     }
 
+    // Copy assignment operator
+    StackLinkedList& operator=(const StackLinkedList &other) {
+        if (this != &other) {
+            // Delete data associated with this
+            deleteStack();
+
+            // Create a temporary copy-object
+            StackLinkedList temp(other);
+            // Transfer ownership of the copy-object's resources to this
+            // This approach minimizes the risk of memory leaks
+            std::swap(allocatedSize, temp.allocatedSize);
+            std::swap(head, temp.head);
+            std::swap(stack, temp.stack);
+        }
+        return *this;
+    }
+
     // Move constructor
     StackLinkedList(StackLinkedList &&other) noexcept {
         allocatedSize = other.allocatedSize;
@@ -182,6 +200,10 @@ public:
     }
 
     ~StackLinkedList() {
+        deleteStack();
+    }
+
+    void deleteStack() {
         Node<T> *n1 = head;
         Node<T> *n2 = head;
         while (n1 != nullptr) {
