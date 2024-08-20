@@ -145,26 +145,50 @@ class StackLinkedList {
     Node<T> *head;
 public:
     StackLinkedList(int size) {
-        std::cout << "Initialize!" << std::endl;
         if (size < 1) {
             throw StackInvalidSizeError("Size must be greater than 0. You gave " +std::to_string(size));
         }
         allocatedSize = size;
         stack = nullptr;
         head = nullptr;
-        std::cout << "Constructor ends!" << std::endl;
     }
 
     // Copy constructor
     StackLinkedList(const StackLinkedList &other) {
+        allocatedSize = other.allocatedSize;
+        if (other.head == nullptr) {
+            stack = nullptr;
+            head = nullptr;
+        } else {
+            head = new Node<T>(other.head->value, nullptr);
+            stack = head;
+            Node<T> *node = other.head->next;
+            while (node != nullptr) {
+                stack = new Node<T>(node->value, stack);
+                node = node->next;
+            }   
+        }
     }
 
+    // Move constructor
     StackLinkedList(StackLinkedList &&other) noexcept {
+        allocatedSize = other.allocatedSize;
+        stack = other.stack;
+        head = other.head;
+
+        other.stack = nullptr;
+        other.head = nullptr;
+        other.allocatedSize = 0;
     }
 
     ~StackLinkedList() {
-        delete stack;
-        delete head;
+        Node<T> *n1 = head;
+        Node<T> *n2 = head;
+        while (n1 != nullptr) {
+            n2 = n1->next;
+            delete n1;
+            n1 = n2;
+        }
     }
 
     // Return the number of nodes in a stack
@@ -201,10 +225,12 @@ public:
         T value = stack->value;
 
         if (head == stack) {
+            delete head;
             head = nullptr;
             stack = nullptr;
         } else {
             stack = stack->previous;
+            delete stack->next;
             stack->next = nullptr;
         }
         return value;

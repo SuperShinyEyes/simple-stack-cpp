@@ -190,47 +190,47 @@ TEST(StackLinkedListTest, HandlesPushPopFunctionPointers) {
 }
 
 
-// TEST(StackLinkedListTest, HandlesInvalidSizeError) {
-//     std::vector<int> stack_sizes = {-1000, -10, -1, 0};
-//     for (int size : stack_sizes){
-//         EXPECT_THROW(StackLinkedList<int> stack(size), StackInvalidSizeError);
-//     }
-// }
+TEST(StackLinkedListTest, HandlesInvalidSizeError) {
+    std::vector<int> stack_sizes = {-1000, -10, -1, 0};
+    for (int size : stack_sizes){
+        EXPECT_THROW(StackLinkedList<int> stack(size), StackInvalidSizeError);
+    }
+}
 
-// TEST(StackLinkedListTest, HandlesValidSize) {
-//     std::vector<int> stack_sizes = {1000, 10, 1};
-//     for (int size : stack_sizes){
-//         EXPECT_NO_THROW(StackLinkedList<int> stack(size));
-//     }
-// }
+TEST(StackLinkedListTest, HandlesValidSize) {
+    std::vector<int> stack_sizes = {1000, 10, 1};
+    for (int size : stack_sizes){
+        EXPECT_NO_THROW(StackLinkedList<int> stack(size));
+    }
+}
 
-// TEST(StackLinkedListTest, HandlesEmptyError) {
-//     StackLinkedList<int> stack(10);
-//     EXPECT_THROW(stack.pop(), StackEmptyError);
-//     stack.push(1);
-//     EXPECT_NO_THROW(stack.pop());
-//     EXPECT_THROW(stack.pop(), StackEmptyError);
-// }
+TEST(StackLinkedListTest, HandlesEmptyError) {
+    StackLinkedList<int> stack(10);
+    EXPECT_THROW(stack.pop(), StackEmptyError);
+    stack.push(1);
+    EXPECT_NO_THROW(stack.pop());
+    EXPECT_THROW(stack.pop(), StackEmptyError);
+}
 
-// TEST(StackLinkedListTest, HandlesFullError) {
-//     StackLinkedList<int> stack(10);
-//     for (int i = 0; i < 10; i++) {
-//         EXPECT_NO_THROW(stack.push(i));
-//     }
-//     EXPECT_THROW(stack.push(1), StackFullError);
-// }
+TEST(StackLinkedListTest, HandlesFullError) {
+    StackLinkedList<int> stack(10);
+    for (int i = 0; i < 10; i++) {
+        EXPECT_NO_THROW(stack.push(i));
+    }
+    EXPECT_THROW(stack.push(1), StackFullError);
+}
 
-// TEST(StackLinkedListTest, HandlesCopyConstructor) {
-//     StackLinkedList<int> s1(10);
-//     for (int i = 0; i < 10; i++) {
-//         s1.push(i);
-//     }
-//     StackLinkedList<int> s2 = s1;
-//     EXPECT_EQ(s1.index, s2.index);
-//     for (int i = 0; i < 10; i++) {
-//         EXPECT_EQ(s1.pop(), s2.pop());
-//     }
-// }
+TEST(StackLinkedListTest, HandlesCopyConstructor) {
+    StackLinkedList<int> s1(10);
+    for (int i = 0; i < 10; i++) {
+        s1.push(i);
+    }
+    StackLinkedList<int> s2 = s1;
+    EXPECT_EQ(s1.getSize(), s2.getSize());
+    for (int i = 0; i < 10; i++) {
+        EXPECT_EQ(s1.pop(), s2.pop());
+    }
+}
 
 // TEST(StackLinkedListTest, HandlesMoveConstructor) {
 //     int size = 10;
