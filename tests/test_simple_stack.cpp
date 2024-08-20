@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
-#include "simple_stack.h"
 #include <vector>
+#include <string>
+#include "simple_stack.h"
+
 
 TEST(AdditionTest, HandlesPositiveInput) {
     EXPECT_EQ(add(1, 2), 3);
@@ -94,7 +96,7 @@ TEST(StackLinkedListTest, HandlesConstructor) {
     EXPECT_EQ(stack.getLength(), 0);
 }
 
-TEST(StackLinkedListTest, HandlesPushPop) {
+TEST(StackLinkedListTest, HandlesPushPopInteger) {
     StackLinkedList<int> stack(10);
     int popped; 
     for (int pushed = 0; pushed < 10; pushed++) {
@@ -103,6 +105,90 @@ TEST(StackLinkedListTest, HandlesPushPop) {
         EXPECT_EQ(pushed, popped);
     }
 }
+
+TEST(StackLinkedListTest, HandlesPushPopFloat) {
+    StackLinkedList<float> stack(10);
+    float popped; 
+    for (float pushed = 0; pushed < 10; pushed++) {
+        stack.push(pushed / 1.0f);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+TEST(StackLinkedListTest, HandlesPushPopDouble) {
+    StackLinkedList<double> stack(10);
+    double popped; 
+    for (double pushed = 0; pushed < 10; pushed++) {
+        stack.push(pushed / 1.0);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+TEST(StackLinkedListTest, HandlesPushPopUInt) {
+    StackLinkedList<uint> stack(10);
+    uint popped; 
+    for (uint pushed = 0; pushed < 10; pushed++) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+TEST(StackLinkedListTest, HandlesPushPopChar) {
+    StackLinkedList<char> stack(10);
+    char popped; 
+    std::vector<char> items = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+    for (char pushed : items) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+TEST(StackLinkedListTest, HandlesPushPopConstChar) {
+    StackLinkedList<const char*> stack(10);
+    const char *popped; 
+    std::vector<const char*> items = {"school", "boy", "girl"};
+    for (const char *pushed : items) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+TEST(StackLinkedListTest, HandlesPushPopVectorInt) {
+    StackLinkedList<std::vector<int>> stack(10);
+    std::vector<int> popped; 
+    std::vector<std::vector<int>> items = {
+        {0,1,2,3},
+        {2,3,4},
+        {9}
+    };
+    for (std::vector<int> pushed : items) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
+int addOne(int a) { return a + 1; }
+int addTwo(int a) { return a + 2; }
+TEST(StackLinkedListTest, HandlesPushPopFunctionPointers) {
+    typedef int (*FunctionPointerType)(int);
+    StackLinkedList<FunctionPointerType> stack(10);
+    FunctionPointerType popped;
+    std::vector<FunctionPointerType> items = {
+        addOne, addTwo
+    };
+    for (FunctionPointerType pushed : items) {
+        stack.push(pushed);
+        popped = stack.pop();
+        EXPECT_EQ(pushed, popped);
+    }
+}
+
 
 // TEST(StackLinkedListTest, HandlesInvalidSizeError) {
 //     std::vector<int> stack_sizes = {-1000, -10, -1, 0};
