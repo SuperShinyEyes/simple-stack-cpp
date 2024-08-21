@@ -153,25 +153,14 @@ template <class T>
 class Node {
  public:
   T value;
-  // Used to reset the "tail" during `pop`.
-  Node *previous;
-  // Used to traverse upon copy/move constructor/assignment
   Node *next;
-  // Chain the previous and this nodes
-  Node(T value, Node *previous)
-      : value(value), previous(previous), next(nullptr) {
-    if (previous != nullptr) {
-      previous->next = this;
-    }
-  }
+  Node(T value, Node *next) : value(value), next(next) {}
 };
 
 template <class T>
 class StackLinkedList : public Stack<T> {
   // Holds the latest/top item in a stack.
-  Node<T> *stack = nullptr;
-  // Used for copy/move constructor/assignment.
-  Node<T> *head = nullptr;
+  Node<T> *top = nullptr;
 
  public:
   StackLinkedList(int capacity) {
@@ -186,7 +175,7 @@ class StackLinkedList : public Stack<T> {
   // Copy constructor
   StackLinkedList(const StackLinkedList &other) {
     this->capacity = other.capacity;
-    Node<T> *otherNode = other.head;
+    Node<T> *otherNode = other.top;
     while (otherNode != nullptr) {
       push(otherNode->value);
       otherNode = otherNode->next;
@@ -205,8 +194,7 @@ class StackLinkedList : public Stack<T> {
       // This approach minimizes the risk of memory leaks
       std::swap(this->capacity, temp.capacity);
       std::swap(this->size, temp.size);
-      std::swap(head, temp.head);
-      std::swap(stack, temp.stack);
+      std::swap(top, temp.top);
     }
     return *this;
   }
@@ -215,13 +203,11 @@ class StackLinkedList : public Stack<T> {
   StackLinkedList(StackLinkedList &&other) noexcept {
     this->capacity = other.capacity;
     this->size = other.size;
-    stack = other.stack;
-    head = other.head;
+    top = other.top;
 
     other.capacity = 0;
     other.size = 0;
-    other.stack = nullptr;
-    other.head = nullptr;
+    other.top = nullptr;
   }
 
   // Move assignment operator
@@ -231,8 +217,7 @@ class StackLinkedList : public Stack<T> {
 
       std::swap(this->capacity, other.capacity);
       std::swap(this->size, other.size);
-      std::swap(head, other.head);
-      std::swap(stack, other.stack);
+      std::swap(top, other.top);
     }
     return *this;
   }
@@ -260,17 +245,10 @@ class StackLinkedList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    T value = stack->value;
-
-    if (head == stack) {
-      delete head;
-      head = nullptr;
-      stack = nullptr;
-    } else {
-      stack = stack->previous;
-      delete stack->next;
-      stack->next = nullptr;
-    }
+    Node<T> *node = top;
+    T value = node->value;
+    top = top->next;
+    delete node;
     this->size--;
     return value;
   }
@@ -281,17 +259,13 @@ class StackLinkedList : public Stack<T> {
           "You can't push to a full stack. The size of the stack is " +
           std::to_string(this->capacity));
     }
-    Node<T> *node = new Node<T>(value, stack);
-    if (isEmpty()) {
-      head = node;
-    }
-    stack = node;
+    Node<T> *node = new Node<T>(value, top);
+    node->next = top;
+    top = node;
     this->size++;
   }
 
-  Node<T> *getStack() const { return stack; }
-
-  Node<T> *getHead() const { return head; }
+  Node<T> *getStack() const { return top; }
 };
 
 #endif  // SIMPLE_STACK_H
