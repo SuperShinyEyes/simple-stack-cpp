@@ -57,7 +57,7 @@ TEST(StackListTest, HandlesCopyConstructor) {
     s1.push(i);
   }
   StackList<int> s2 = s1;
-  EXPECT_EQ(s1.index, s2.index);
+  EXPECT_EQ(s1.getSize(), s2.getSize());
   for (int i = 0; i < 10; i++) {
     EXPECT_EQ(s1.pop(), s2.pop());
   }
@@ -70,11 +70,11 @@ TEST(StackListTest, HandlesMoveConstructor) {
     s1.push(i);
   }
   StackList<int> s2 = std::move(s1);
-  EXPECT_EQ(s1.index, 0);
+  EXPECT_EQ(s1.getSize(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
   EXPECT_EQ(s1.getStack(), nullptr);
 
-  EXPECT_EQ(s2.index, size);
+  EXPECT_EQ(s2.getSize(), size);
   EXPECT_EQ(s2.getCapacity(), size);
 
   for (int i = 9; i > -1; i--) {

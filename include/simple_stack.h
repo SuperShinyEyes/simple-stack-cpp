@@ -70,7 +70,6 @@ class StackList : public Stack<T> {
   T *stack;
 
  public:
-  int index = 0;
   StackList(int capacity) {
     if (capacity < 1) {
       throw StackInvalidCapacityError(
@@ -83,7 +82,7 @@ class StackList : public Stack<T> {
 
   // Copy constructor
   StackList(const StackList &other) {
-    index = other.index;
+    this->size = other.size;
     this->capacity = other.capacity;
     stack = new T[this->capacity];
 
@@ -94,12 +93,12 @@ class StackList : public Stack<T> {
 
   // Move constructor
   StackList(StackList &&other) noexcept {
-    index = other.index;
+    this->size = other.size;
     this->capacity = other.capacity;
     stack = other.stack;
 
     other.stack = nullptr;
-    other.index = 0;
+    other.size = 0;
     other.capacity = 0;
   }
 
@@ -107,7 +106,7 @@ class StackList : public Stack<T> {
 
   void display() {
     std::stringstream ss;
-    for (int i = 0; i < index; i++) {
+    for (int i = 0; i < this->size; i++) {
       ss << stack[i] << " ";
     }
     std::cout << "Stack (size: " << this->capacity << "): " << (ss.str())
@@ -123,8 +122,8 @@ class StackList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    T value = *(stack + index - 1);  // FIXME: This is
-    index--;
+    T value = *(stack + this->size - 1);  // FIXME: This is
+    this->size--;
     return value;
   }
 
@@ -135,10 +134,10 @@ class StackList : public Stack<T> {
           "stack is " +
           std::to_string(this->capacity));
     }
-    *(stack + index) = value;
-    index++;
+    *(stack + this->size) = value;
+    this->size++;
   }
-  int getSize() const override { return this->index; }
+  int getSize() const override { return this->size; }
 
   T *getStack() const { return stack; }
 };
