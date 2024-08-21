@@ -44,6 +44,8 @@ class StackOverflowError : public std::exception {
   std::string message_;
 };
 
+bool isValidCapacity(int capacity) { return capacity > 0; }
+
 ////////////////////////////////////////////////////
 
 // Stack Abstract Class
@@ -66,51 +68,86 @@ class Stack {
   virtual T peek() = 0;
   int getCapacity() const { return capacity; };
   virtual int getNumberOfElements() const = 0;
+  virtual void reset() = 0;
 };
 
 template <class T>
 class StackList : public Stack<T> {
-  T *stack;
+  T *array;
 
  public:
   StackList(int capacity) {
-    if (capacity < 1) {
+    if (!isValidCapacity(capacity)) {
       throw StackInvalidCapacityError(
           "Capacity must be greater than 0. You gave " +
           std::to_string(capacity));
     }
     this->capacity = capacity;
-    stack = new T[capacity];
+    array = new T[capacity];
   }
 
   // Copy constructor
   StackList(const StackList &other) {
-    this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
-    stack = new T[this->capacity];
+    this->numberOfElements = other.numberOfElements;
+    array = new T[this->capacity];
 
-    for (int i = 0; i < this->capacity; i++) {
-      stack[i] = other.stack[i];
+    for (int i = 0; i < this->numberOfElements; i++) {
+      array[i] = other.array[i];
     }
+  }
+
+  StackList &operator=(const StackList &other) {
+    if (this != &other) {
+      reset();
+
+      // Create a temporary copy-object.
+      StackList temp = other;
+      std::swap(this->capacity, temp.capacity);
+      std::swap(this->numberOfElements, temp.numberOfElements);
+      std::swap(this->array, temp.array);
+    }
+    return *this;
   }
 
   // Move constructor
   StackList(StackList &&other) noexcept {
     this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
-    stack = other.stack;
+    array = other.array;
 
-    other.stack = nullptr;
+    other.array = nullptr;
     other.numberOfElements = 0;
     other.capacity = 0;
   }
 
-  ~StackList() { delete[] stack; }
+  // Move assignment
+  StackList &operator=(StackList &&other) noexcept {
+    if (this != &other) {
+      reset();
+
+      std::swap(this->capacity, other.capacity);
+      std::swap(this->numberOfElements, other.numberOfElements);
+      std::swap(this->array, other.array);
+    }
+    return *this;
+  }
+
+  ~StackList() { reset(); }
+
+  void reset() override {
+    while (isEmpty() == false) {
+      pop();
+    }
+    delete[] array;
+    array = nullptr;
+    this->capacity = 0;
+  }
 
   void display() {
     std::stringstream ss;
     for (int i = 0; i < this->numberOfElements; i++) {
-      ss << stack[i] << " ";
+      ss << array[i] << " ";
     }
     std::cout << "Stack (numberOfElements: " << this->capacity
               << "): " << (ss.str()) << std::endl;
@@ -126,7 +163,7 @@ class StackList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't peek an empty stack.");
     }
-    return *(stack + this->numberOfElements - 1);
+    return *(array + this->numberOfElements - 1);
   }
 
   // Return and remove the top item
@@ -134,7 +171,7 @@ class StackList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    T value = *(stack + this->numberOfElements - 1);  // FIXME: This is
+    T value = *(array + this->numberOfElements - 1);  // FIXME: This is
     this->numberOfElements--;
     return value;
   }
@@ -147,12 +184,12 @@ class StackList : public Stack<T> {
           "stack is " +
           std::to_string(this->capacity));
     }
-    *(stack + this->numberOfElements) = value;
+    *(array + this->numberOfElements) = value;
     this->numberOfElements++;
   }
   int getNumberOfElements() const override { return this->numberOfElements; }
 
-  T *getStack() const { return stack; }
+  T *getArray() const { return array; }
 };
 
 // A container of each stack item for the linked list implementation,
@@ -174,7 +211,7 @@ class StackLinkedList : public Stack<T> {
 
  public:
   StackLinkedList(int capacity) {
-    if (capacity < 1) {
+    if (!isValidCapacity(capacity)) {
       throw StackInvalidCapacityError(
           "Capacity must be greater than 0. You gave " +
           std::to_string(capacity));
@@ -208,10 +245,10 @@ class StackLinkedList : public Stack<T> {
   StackLinkedList &operator=(const StackLinkedList &other) {
     if (this != &other) {
       // Delete data associated with this
-      deleteStack();
+      reset();
 
       // Create a temporary copy-object
-      StackLinkedList temp(other);
+      StackLinkedList temp = other;
       // Transfer ownership of the copy-object's resources to this
       // This approach minimizes the risk of memory leaks
       std::swap(this->capacity, temp.capacity);
@@ -235,7 +272,7 @@ class StackLinkedList : public Stack<T> {
   // Move assignment operator
   StackLinkedList &operator=(StackLinkedList &&other) noexcept {
     if (this != &other) {
-      deleteStack();
+      reset();
 
       std::swap(this->capacity, other.capacity);
       std::swap(this->numberOfElements, other.numberOfElements);
@@ -244,11 +281,11 @@ class StackLinkedList : public Stack<T> {
     return *this;
   }
 
-  ~StackLinkedList() { deleteStack(); }
+  ~StackLinkedList() { reset(); }
 
   // Empty every member of the instance. Used for move assignment/constructor
   // and destructor.
-  void deleteStack() {
+  void reset() override {
     while (isEmpty() == false) {
       pop();
     }

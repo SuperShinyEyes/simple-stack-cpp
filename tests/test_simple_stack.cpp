@@ -71,6 +71,19 @@ TEST(StackListTest, HandlesCopyConstructor) {
   }
 }
 
+TEST(StackListTest, HandlesCopyAssignment) {
+  StackList<int> s1(10);
+  for (int i = 0; i < 10; i++) {
+    s1.push(i);
+  }
+  StackList<int> s2(1);
+  s2 = s1;
+  EXPECT_EQ(s1.getNumberOfElements(), s2.getNumberOfElements());
+  for (int i = 0; i < 10; i++) {
+    EXPECT_EQ(s1.pop(), s2.pop());
+  }
+}
+
 TEST(StackListTest, HandlesMoveConstructor) {
   int size = 10;
   StackList<int> s1(size);
@@ -80,7 +93,27 @@ TEST(StackListTest, HandlesMoveConstructor) {
   StackList<int> s2 = std::move(s1);
   EXPECT_EQ(s1.getNumberOfElements(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
-  EXPECT_EQ(s1.getStack(), nullptr);
+  EXPECT_EQ(s1.getArray(), nullptr);
+
+  EXPECT_EQ(s2.getNumberOfElements(), size);
+  EXPECT_EQ(s2.getCapacity(), size);
+
+  for (int i = 9; i > -1; i--) {
+    EXPECT_EQ(i, s2.pop());
+  }
+}
+
+TEST(StackListTest, HandlesMoveAssignment) {
+  int size = 10;
+  StackList<int> s1(size);
+  for (int i = 0; i < size; i++) {
+    s1.push(i);
+  }
+  StackList<int> s2(1);
+  s2 = std::move(s1);
+  EXPECT_EQ(s1.getNumberOfElements(), 0);
+  EXPECT_EQ(s1.getCapacity(), 0);
+  EXPECT_EQ(s1.getArray(), nullptr);
 
   EXPECT_EQ(s2.getNumberOfElements(), size);
   EXPECT_EQ(s2.getCapacity(), size);
@@ -255,7 +288,7 @@ TEST(StackLinkedListTest, HandlesDeleteStack) {
   for (int i = 0; i < size; i++) {
     s1.push(i);
   }
-  s1.deleteStack();
+  s1.reset();
   EXPECT_TRUE(s1.isEmpty());
   EXPECT_EQ(s1.getNumberOfElements(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
