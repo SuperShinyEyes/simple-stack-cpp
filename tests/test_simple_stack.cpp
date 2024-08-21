@@ -23,7 +23,7 @@ TEST(StackListTest, HandlesPushPop) {
 TEST(StackListTest, HandlesInvalidSizeError) {
   std::vector<int> stack_sizes = {-1000, -10, -1, 0};
   for (int size : stack_sizes) {
-    EXPECT_THROW(StackList<int> stack(size), StackInvalidSizeError);
+    EXPECT_THROW(StackList<int> stack(size), StackInvalidCapacityError);
   }
 }
 
@@ -179,7 +179,7 @@ TEST(StackLinkedListTest, HandlesPushPopFunctionPointers) {
 TEST(StackLinkedListTest, HandlesInvalidSizeError) {
   std::vector<int> stack_sizes = {-1000, -10, -1, 0};
   for (int size : stack_sizes) {
-    EXPECT_THROW(StackLinkedList<int> stack(size), StackInvalidSizeError);
+    EXPECT_THROW(StackLinkedList<int> stack(size), StackInvalidCapacityError);
   }
 }
 
