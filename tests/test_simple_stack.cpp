@@ -21,6 +21,14 @@ TEST(StackListTest, HandlesPushPop) {
   }
 }
 
+TEST(StackListTest, HandlesPeek) {
+  StackList<int> stack(10);
+  for (int pushed = 0; pushed < 10; pushed++) {
+    stack.push(pushed);
+    EXPECT_EQ(stack.peek(), pushed);
+  }
+}
+
 TEST(StackListTest, HandlesInvalidSizeError) {
   std::vector<int> stack_sizes = {-1000, -10, -1, 0};
   for (int size : stack_sizes) {
@@ -251,6 +259,15 @@ TEST(StackLinkedListTest, HandlesDeleteStack) {
   EXPECT_TRUE(s1.isEmpty());
   EXPECT_EQ(s1.getNumberOfElements(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
+}
+
+TEST(StackLinkedListTest, HandlesPeek) {
+  int size = 10;
+  StackLinkedList<int> s1(size);
+  for (int i = 0; i < size; i++) {
+    s1.push(i);
+    EXPECT_EQ(s1.peek(), i);
+  }
 }
 
 TEST(StackLinkedListTest, HandlesCopyConstructor) {

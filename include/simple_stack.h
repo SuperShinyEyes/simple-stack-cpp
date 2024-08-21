@@ -63,7 +63,7 @@ class Stack {
   virtual bool isEmpty() const = 0;
   virtual void push(T value) = 0;
   virtual T pop() = 0;
-  // virtual T peek() = 0;
+  virtual T peek() = 0;
   int getCapacity() const { return capacity; };
   virtual int getNumberOfElements() const = 0;
 };
@@ -122,6 +122,13 @@ class StackList : public Stack<T> {
     return this->getNumberOfElements() == this->capacity;
   }
 
+  T peek() override {
+    if (isEmpty()) {
+      throw StackUnderflowError("You can't peek an empty stack.");
+    }
+    return *(stack + this->numberOfElements - 1);
+  }
+
   // Return and remove the top item
   T pop() override {
     if (isEmpty()) {
@@ -159,6 +166,7 @@ class Node {
   Node(T value) : value(value) {}
 };
 
+// Singly linked list implementation
 template <class T>
 class StackLinkedList : public Stack<T> {
   // Holds the latest/top item in a stack.
@@ -185,7 +193,7 @@ class StackLinkedList : public Stack<T> {
     top = new Node<T>(otherNode->value);
     this->numberOfElements++;
 
-    // Then, copy the remaining nodes.
+    // Then, copy the remaining nodes in the same sequence.
     Node<T> *thisNode = top;
     otherNode = otherNode->next;
     while (otherNode != nullptr) {
@@ -254,6 +262,13 @@ class StackLinkedList : public Stack<T> {
 
   bool isFull() const override {
     return getNumberOfElements() == this->capacity;
+  }
+
+  T peek() override {
+    if (isEmpty()) {
+      throw StackUnderflowError("You can't peek an empty stack.");
+    }
+    return top->value;
   }
 
   // Return and remove the top item
