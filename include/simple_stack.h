@@ -53,8 +53,13 @@ class Stack {
   int allocatedSize;
 
  public:
-  virtual T pop() = 0;
+  virtual bool isFull() = 0;
+  virtual bool isEmpty() = 0;
   virtual void push(T value) = 0;
+  virtual T pop() = 0;
+  // virtual T peek() = 0;
+  int getCapacity() const { return allocatedSize; };
+  virtual int getSize() const = 0;
 };
 
 template <class T>
@@ -105,12 +110,12 @@ class StackList : public Stack<T> {
               << std::endl;
   }
 
-  bool isEmpty() { return index == 0; }
+  bool isEmpty() override { return this->getSize() == 0; }
 
-  bool isFull() { return index == this->allocatedSize; }
+  bool isFull() override { return this->getSize() == this->allocatedSize; }
 
   // Return and remove the top item
-  virtual T pop() {
+  T pop() override {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
@@ -119,7 +124,7 @@ class StackList : public Stack<T> {
     return value;
   }
 
-  void push(T value) {
+  void push(T value) override {
     if (isFull()) {
       throw StackOverflowError(
           "Stack Overflow: You can't push to a full stack. The size of the "
@@ -129,7 +134,7 @@ class StackList : public Stack<T> {
     *(stack + index) = value;
     index++;
   }
-  int getSize() const { return this->allocatedSize; }
+  int getSize() const override { return this->index; }
 
   T *getStack() const { return stack; }
 };
@@ -235,7 +240,7 @@ class StackLinkedList : public Stack<T> {
   }
 
   // Return the number of nodes in a stack
-  int getLength() {
+  int getSize() const override {
     int size = 0;
     Node<T> *node = head;
     while (size < this->allocatedSize) {
@@ -248,14 +253,12 @@ class StackLinkedList : public Stack<T> {
     return size;
   }
 
-  int getSize() { return this->allocatedSize; }
+  bool isEmpty() override { return head == nullptr; }
 
-  bool isEmpty() { return head == nullptr; }
-
-  bool isFull() { return getLength() == this->allocatedSize; }
+  bool isFull() override { return getSize() == this->allocatedSize; }
 
   // Return and remove the top item
-  T pop() {
+  T pop() override {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
@@ -273,7 +276,7 @@ class StackLinkedList : public Stack<T> {
     return value;
   }
 
-  void push(T value) {
+  void push(T value) override {
     if (isFull()) {
       throw StackOverflowError(
           "You can't push to a full stack. The size of the stack is " +

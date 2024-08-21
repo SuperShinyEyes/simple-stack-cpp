@@ -7,7 +7,7 @@
 
 TEST(StackListTest, HandlesConstructor) {
   StackList<int> stack(10);
-  EXPECT_EQ(stack.getSize(), 10);
+  EXPECT_EQ(stack.getCapacity(), 10);
 }
 
 TEST(StackListTest, HandlesPushPop) {
@@ -70,11 +70,11 @@ TEST(StackListTest, HandlesMoveConstructor) {
   }
   StackList<int> s2 = std::move(s1);
   EXPECT_EQ(s1.index, 0);
-  EXPECT_EQ(s1.getSize(), 0);
+  EXPECT_EQ(s1.getCapacity(), 0);
   EXPECT_EQ(s1.getStack(), nullptr);
 
   EXPECT_EQ(s2.index, size);
-  EXPECT_EQ(s2.getSize(), size);
+  EXPECT_EQ(s2.getCapacity(), size);
 
   for (int i = 9; i > -1; i--) {
     EXPECT_EQ(i, s2.pop());
@@ -85,8 +85,8 @@ TEST(StackListTest, HandlesMoveConstructor) {
 
 TEST(StackLinkedListTest, HandlesConstructor) {
   StackLinkedList<int> stack(10);
-  EXPECT_EQ(stack.getSize(), 10);
-  EXPECT_EQ(stack.getLength(), 0);
+  EXPECT_EQ(stack.getCapacity(), 10);
+  EXPECT_EQ(stack.getSize(), 0);
 }
 
 TEST(StackLinkedListTest, HandlesPushPopInteger) {
@@ -212,12 +212,12 @@ TEST(StackLinkedListTest, HandlesCopyConstructor) {
     s1.push(i);
   }
   StackLinkedList<int> s2 = s1;
+  EXPECT_EQ(s1.getCapacity(), s2.getCapacity());
   EXPECT_EQ(s1.getSize(), s2.getSize());
-  EXPECT_EQ(s1.getLength(), s2.getLength());
 
   const Node<int> *n1 = s1.getHead();
   const Node<int> *n2 = s2.getHead();
-  for (int i = 0; i < s1.getLength(); i++) {
+  for (int i = 0; i < s1.getSize(); i++) {
     // Memory addresses should be different
     EXPECT_NE(n1, n2);
     // Values should be same
@@ -239,12 +239,12 @@ TEST(StackLinkedListTest, HandlesCopyAssignment) {
   }
   StackLinkedList<int> s2(1);
   s2 = s1;
+  EXPECT_EQ(s1.getCapacity(), s2.getCapacity());
   EXPECT_EQ(s1.getSize(), s2.getSize());
-  EXPECT_EQ(s1.getLength(), s2.getLength());
 
   const Node<int> *n1 = s1.getHead();
   const Node<int> *n2 = s2.getHead();
-  for (int i = 0; i < s1.getLength(); i++) {
+  for (int i = 0; i < s1.getSize(); i++) {
     // Memory addresses should be different
     EXPECT_NE(n1, n2);
     // Values should be same
@@ -266,13 +266,13 @@ TEST(StackLinkedListTest, HandlesMoveConstructor) {
     s1.push(i);
   }
   StackLinkedList<int> s2 = std::move(s1);
+  EXPECT_EQ(s1.getCapacity(), 0);
   EXPECT_EQ(s1.getSize(), 0);
-  EXPECT_EQ(s1.getLength(), 0);
   EXPECT_EQ(s1.getStack(), nullptr);
   EXPECT_EQ(s1.getHead(), nullptr);
 
+  EXPECT_EQ(s2.getCapacity(), size);
   EXPECT_EQ(s2.getSize(), size);
-  EXPECT_EQ(s2.getLength(), size);
 
   for (int i = 9; i > -1; i--) {
     EXPECT_EQ(i, s2.pop());
@@ -287,13 +287,13 @@ TEST(StackLinkedListTest, HandlesMoveAssignment) {
   }
   StackLinkedList<int> s2(1);
   s2 = std::move(s1);
+  EXPECT_EQ(s1.getCapacity(), 0);
   EXPECT_EQ(s1.getSize(), 0);
-  EXPECT_EQ(s1.getLength(), 0);
   EXPECT_EQ(s1.getStack(), nullptr);
   EXPECT_EQ(s1.getHead(), nullptr);
 
+  EXPECT_EQ(s2.getCapacity(), size);
   EXPECT_EQ(s2.getSize(), size);
-  EXPECT_EQ(s2.getLength(), size);
 
   for (int i = 9; i > -1; i--) {
     EXPECT_EQ(i, s2.pop());
