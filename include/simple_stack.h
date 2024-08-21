@@ -50,8 +50,14 @@ class StackOverflowError : public std::exception {
 template <class T>
 class Stack {
  protected:
+  // These protected members should be accessible in copy/move
+  // constructor/assignment.
+
+  // During the instantiation, a user defines the maximum number items a stack
+  // could hold.
   int capacity;
-  int size;
+  //
+  int size = 0;
 
  public:
   virtual bool isFull() const = 0;
@@ -61,8 +67,6 @@ class Stack {
   // virtual T peek() = 0;
   int getCapacity() const { return capacity; };
   virtual int getSize() const = 0;
-
-  Stack() { size = 0; }
 };
 
 template <class T>
