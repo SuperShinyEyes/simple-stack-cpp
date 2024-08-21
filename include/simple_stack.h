@@ -68,7 +68,7 @@ class Stack {
   virtual T peek() = 0;
   int getCapacity() const { return capacity; };
   virtual int getNumberOfElements() const = 0;
-  virtual void reset() = 0;
+  virtual void clear() = 0;
 };
 
 template <class T>
@@ -99,7 +99,7 @@ class StackList : public Stack<T> {
 
   StackList &operator=(const StackList &other) {
     if (this != &other) {
-      reset();
+      clear();
 
       // Create a temporary copy-object.
       StackList temp = other;
@@ -124,7 +124,7 @@ class StackList : public Stack<T> {
   // Move assignment
   StackList &operator=(StackList &&other) noexcept {
     if (this != &other) {
-      reset();
+      clear();
 
       std::swap(this->capacity, other.capacity);
       std::swap(this->numberOfElements, other.numberOfElements);
@@ -133,9 +133,9 @@ class StackList : public Stack<T> {
     return *this;
   }
 
-  ~StackList() { reset(); }
+  ~StackList() { clear(); }
 
-  void reset() override {
+  void clear() override {
     while (isEmpty() == false) {
       pop();
     }
@@ -245,7 +245,7 @@ class StackLinkedList : public Stack<T> {
   StackLinkedList &operator=(const StackLinkedList &other) {
     if (this != &other) {
       // Delete data associated with this
-      reset();
+      clear();
 
       // Create a temporary copy-object
       StackLinkedList temp = other;
@@ -272,7 +272,7 @@ class StackLinkedList : public Stack<T> {
   // Move assignment operator
   StackLinkedList &operator=(StackLinkedList &&other) noexcept {
     if (this != &other) {
-      reset();
+      clear();
 
       std::swap(this->capacity, other.capacity);
       std::swap(this->numberOfElements, other.numberOfElements);
@@ -281,11 +281,11 @@ class StackLinkedList : public Stack<T> {
     return *this;
   }
 
-  ~StackLinkedList() { reset(); }
+  ~StackLinkedList() { clear(); }
 
   // Empty every member of the instance. Used for move assignment/constructor
   // and destructor.
-  void reset() override {
+  void clear() override {
     while (isEmpty() == false) {
       pop();
     }
