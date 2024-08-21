@@ -57,7 +57,7 @@ class Stack {
   // could hold.
   int capacity;
   //
-  int size = 0;
+  int numberOfElements = 0;
 
  public:
   virtual bool isFull() const = 0;
@@ -66,7 +66,7 @@ class Stack {
   virtual T pop() = 0;
   // virtual T peek() = 0;
   int getCapacity() const { return capacity; };
-  virtual int getSize() const = 0;
+  virtual int getNumberOfElements() const = 0;
 };
 
 template <class T>
@@ -86,7 +86,7 @@ class StackList : public Stack<T> {
 
   // Copy constructor
   StackList(const StackList &other) {
-    this->size = other.size;
+    this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
     stack = new T[this->capacity];
 
@@ -97,12 +97,12 @@ class StackList : public Stack<T> {
 
   // Move constructor
   StackList(StackList &&other) noexcept {
-    this->size = other.size;
+    this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
     stack = other.stack;
 
     other.stack = nullptr;
-    other.size = 0;
+    other.numberOfElements = 0;
     other.capacity = 0;
   }
 
@@ -110,38 +110,41 @@ class StackList : public Stack<T> {
 
   void display() {
     std::stringstream ss;
-    for (int i = 0; i < this->size; i++) {
+    for (int i = 0; i < this->numberOfElements; i++) {
       ss << stack[i] << " ";
     }
-    std::cout << "Stack (size: " << this->capacity << "): " << (ss.str())
-              << std::endl;
+    std::cout << "Stack (numberOfElements: " << this->capacity
+              << "): " << (ss.str()) << std::endl;
   }
 
-  bool isEmpty() const override { return this->getSize() == 0; }
+  bool isEmpty() const override { return this->getNumberOfElements() == 0; }
 
-  bool isFull() const override { return this->getSize() == this->capacity; }
+  bool isFull() const override {
+    return this->getNumberOfElements() == this->capacity;
+  }
 
   // Return and remove the top item
   T pop() override {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    T value = *(stack + this->size - 1);  // FIXME: This is
-    this->size--;
+    T value = *(stack + this->numberOfElements - 1);  // FIXME: This is
+    this->numberOfElements--;
     return value;
   }
 
   void push(T value) override {
     if (isFull()) {
       throw StackOverflowError(
-          "Stack Overflow: You can't push to a full stack. The size of the "
+          "Stack Overflow: You can't push to a full stack. The "
+          "numberOfElements of the "
           "stack is " +
           std::to_string(this->capacity));
     }
-    *(stack + this->size) = value;
-    this->size++;
+    *(stack + this->numberOfElements) = value;
+    this->numberOfElements++;
   }
-  int getSize() const override { return this->size; }
+  int getNumberOfElements() const override { return this->numberOfElements; }
 
   T *getStack() const { return stack; }
 };
@@ -181,7 +184,7 @@ class StackLinkedList : public Stack<T> {
     // First, copy the top.
     Node<T> *otherNode = other.top;
     top = new Node<T>(otherNode->value, nullptr);
-    this->size++;
+    this->numberOfElements++;
 
     // Then, copy the remaining nodes.
     Node<T> *thisNode = top;
@@ -190,7 +193,7 @@ class StackLinkedList : public Stack<T> {
       thisNode->next = new Node<T>(otherNode->value, nullptr);
       thisNode = thisNode->next;
       otherNode = otherNode->next;
-      this->size++;
+      this->numberOfElements++;
     }
   }
 
@@ -205,7 +208,7 @@ class StackLinkedList : public Stack<T> {
       // Transfer ownership of the copy-object's resources to this
       // This approach minimizes the risk of memory leaks
       std::swap(this->capacity, temp.capacity);
-      std::swap(this->size, temp.size);
+      std::swap(this->numberOfElements, temp.numberOfElements);
       std::swap(top, temp.top);
     }
     return *this;
@@ -214,11 +217,11 @@ class StackLinkedList : public Stack<T> {
   // Move constructor
   StackLinkedList(StackLinkedList &&other) noexcept {
     this->capacity = other.capacity;
-    this->size = other.size;
+    this->numberOfElements = other.numberOfElements;
     top = other.top;
 
     other.capacity = 0;
-    other.size = 0;
+    other.numberOfElements = 0;
     other.top = nullptr;
   }
 
@@ -228,7 +231,7 @@ class StackLinkedList : public Stack<T> {
       deleteStack();
 
       std::swap(this->capacity, other.capacity);
-      std::swap(this->size, other.size);
+      std::swap(this->numberOfElements, other.numberOfElements);
       std::swap(top, other.top);
     }
     return *this;
@@ -246,11 +249,13 @@ class StackLinkedList : public Stack<T> {
   }
 
   // Return the number of nodes in a stack
-  int getSize() const override { return this->size; }
+  int getNumberOfElements() const override { return this->numberOfElements; }
 
-  bool isEmpty() const override { return getSize() == 0; }
+  bool isEmpty() const override { return getNumberOfElements() == 0; }
 
-  bool isFull() const override { return getSize() == this->capacity; }
+  bool isFull() const override {
+    return getNumberOfElements() == this->capacity;
+  }
 
   // Return and remove the top item
   T pop() override {
@@ -261,20 +266,21 @@ class StackLinkedList : public Stack<T> {
     T value = node->value;
     top = top->next;
     delete node;
-    this->size--;
+    this->numberOfElements--;
     return value;
   }
 
   void push(T value) override {
     if (isFull()) {
       throw StackOverflowError(
-          "You can't push to a full stack. The size of the stack is " +
+          "You can't push to a full stack. The numberOfElements of the stack "
+          "is " +
           std::to_string(this->capacity));
     }
     Node<T> *node = new Node<T>(value, top);
     node->next = top;
     top = node;
-    this->size++;
+    this->numberOfElements++;
   }
 
   Node<T> *getTop() const { return top; }
