@@ -53,8 +53,8 @@ class Stack {
   int capacity;
 
  public:
-  virtual bool isFull() = 0;
-  virtual bool isEmpty() = 0;
+  virtual bool isFull() const = 0;
+  virtual bool isEmpty() const = 0;
   virtual void push(T value) = 0;
   virtual T pop() = 0;
   // virtual T peek() = 0;
@@ -111,9 +111,9 @@ class StackList : public Stack<T> {
               << std::endl;
   }
 
-  bool isEmpty() override { return this->getSize() == 0; }
+  bool isEmpty() const override { return this->getSize() == 0; }
 
-  bool isFull() override { return this->getSize() == this->capacity; }
+  bool isFull() const override { return this->getSize() == this->capacity; }
 
   // Return and remove the top item
   T pop() override {
@@ -140,12 +140,18 @@ class StackList : public Stack<T> {
   T *getStack() const { return stack; }
 };
 
+// A container of each stack item for the linked list implementation,
+// `StackLinkedList`. It has an embedded "chaining" logic using `previous` and
+// `next` members
 template <class T>
 class Node {
  public:
   T value;
+  // Used to reset the "tail" during `pop`.
   Node *previous;
+  // Used to traverse upon copy/move constructor/assignment
   Node *next;
+  // Chain the previous and this nodes
   Node(T value, Node *previous)
       : value(value), previous(previous), next(nullptr) {
     if (previous != nullptr) {
@@ -157,6 +163,7 @@ class Node {
 template <class T>
 class StackLinkedList : public Stack<T> {
   Node<T> *stack;
+  // Used for copy/move constructor/assignment.
   Node<T> *head;
 
  public:
@@ -174,7 +181,7 @@ class StackLinkedList : public Stack<T> {
   // Copy constructor
   StackLinkedList(const StackLinkedList &other) {
     this->capacity = other.capacity;
-    if (other.head == nullptr) {
+    if (other.isEmpty()) {
       stack = nullptr;
       head = nullptr;
     } else {
@@ -230,15 +237,13 @@ class StackLinkedList : public Stack<T> {
 
   ~StackLinkedList() { deleteStack(); }
 
+  // Empty every member of the instance. Used for move assignment/constructor
+  // and destructor.
   void deleteStack() {
-    this->capacity = 0;
-    Node<T> *n1 = head;
-    Node<T> *n2 = head;
-    while (n1 != nullptr) {
-      n2 = n1->next;
-      delete n1;
-      n1 = n2;
+    while (stack != nullptr) {
+      this->pop();
     }
+    this->capacity = 0;
   }
 
   // Return the number of nodes in a stack
@@ -255,9 +260,9 @@ class StackLinkedList : public Stack<T> {
     return size;
   }
 
-  bool isEmpty() override { return getSize() == 0; }
+  bool isEmpty() const override { return getSize() == 0; }
 
-  bool isFull() override { return getSize() == this->capacity; }
+  bool isFull() const override { return getSize() == this->capacity; }
 
   // Return and remove the top item
   T pop() override {
