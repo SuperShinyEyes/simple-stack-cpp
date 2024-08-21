@@ -253,7 +253,7 @@ class StackLinkedList : public Stack<T> {
     return size;
   }
 
-  bool isEmpty() override { return head == nullptr; }
+  bool isEmpty() override { return getSize() == 0; }
 
   bool isFull() override { return getSize() == this->allocatedSize; }
 
