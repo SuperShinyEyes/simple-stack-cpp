@@ -175,10 +175,22 @@ class StackLinkedList : public Stack<T> {
   // Copy constructor
   StackLinkedList(const StackLinkedList &other) {
     this->capacity = other.capacity;
+    if (other.isEmpty() == true) {
+      return;
+    }
+    // First, copy the top.
     Node<T> *otherNode = other.top;
+    top = new Node<T>(otherNode->value, nullptr);
+    this->size++;
+
+    // Then, copy the remaining nodes.
+    Node<T> *thisNode = top;
+    otherNode = otherNode->next;
     while (otherNode != nullptr) {
-      push(otherNode->value);
+      thisNode->next = new Node<T>(otherNode->value, nullptr);
+      thisNode = thisNode->next;
       otherNode = otherNode->next;
+      this->size++;
     }
   }
 
@@ -265,7 +277,7 @@ class StackLinkedList : public Stack<T> {
     this->size++;
   }
 
-  Node<T> *getStack() const { return top; }
+  Node<T> *getTop() const { return top; }
 };
 
 #endif  // SIMPLE_STACK_H
