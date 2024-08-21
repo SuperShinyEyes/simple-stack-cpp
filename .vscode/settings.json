@@ -109,7 +109,8 @@
     "unordered_map": "cpp",
     "variant": "cpp",
     "vector": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "__memory": "cpp"
   },
   "C_Cpp.clang_format_style": "file",
   "editor.formatOnSave": true,

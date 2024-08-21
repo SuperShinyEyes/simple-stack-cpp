@@ -51,6 +51,7 @@ template <class T>
 class Stack {
  protected:
   int capacity;
+  int size;
 
  public:
   virtual bool isFull() const = 0;
@@ -60,6 +61,8 @@ class Stack {
   // virtual T peek() = 0;
   int getCapacity() const { return capacity; };
   virtual int getSize() const = 0;
+
+  Stack() { size = 0; }
 };
 
 template <class T>
@@ -162,9 +165,10 @@ class Node {
 
 template <class T>
 class StackLinkedList : public Stack<T> {
-  Node<T> *stack;
+  // Holds the latest/top item in a stack.
+  Node<T> *stack = nullptr;
   // Used for copy/move constructor/assignment.
-  Node<T> *head;
+  Node<T> *head = nullptr;
 
  public:
   StackLinkedList(int capacity) {
@@ -174,24 +178,15 @@ class StackLinkedList : public Stack<T> {
           std::to_string(capacity));
     }
     this->capacity = capacity;
-    stack = nullptr;
-    head = nullptr;
   }
 
   // Copy constructor
   StackLinkedList(const StackLinkedList &other) {
     this->capacity = other.capacity;
-    if (other.isEmpty()) {
-      stack = nullptr;
-      head = nullptr;
-    } else {
-      head = new Node<T>(other.head->value, nullptr);
-      stack = head;
-      Node<T> *node = other.head->next;
-      while (node != nullptr) {
-        stack = new Node<T>(node->value, stack);
-        node = node->next;
-      }
+    Node<T> *otherNode = other.head;
+    while (otherNode != nullptr) {
+      push(otherNode->value);
+      otherNode = otherNode->next;
     }
   }
 
@@ -206,6 +201,7 @@ class StackLinkedList : public Stack<T> {
       // Transfer ownership of the copy-object's resources to this
       // This approach minimizes the risk of memory leaks
       std::swap(this->capacity, temp.capacity);
+      std::swap(this->size, temp.size);
       std::swap(head, temp.head);
       std::swap(stack, temp.stack);
     }
@@ -215,12 +211,14 @@ class StackLinkedList : public Stack<T> {
   // Move constructor
   StackLinkedList(StackLinkedList &&other) noexcept {
     this->capacity = other.capacity;
+    this->size = other.size;
     stack = other.stack;
     head = other.head;
 
+    other.capacity = 0;
+    other.size = 0;
     other.stack = nullptr;
     other.head = nullptr;
-    other.capacity = 0;
   }
 
   // Move assignment operator
@@ -229,6 +227,7 @@ class StackLinkedList : public Stack<T> {
       deleteStack();
 
       std::swap(this->capacity, other.capacity);
+      std::swap(this->size, other.size);
       std::swap(head, other.head);
       std::swap(stack, other.stack);
     }
@@ -240,25 +239,14 @@ class StackLinkedList : public Stack<T> {
   // Empty every member of the instance. Used for move assignment/constructor
   // and destructor.
   void deleteStack() {
-    while (stack != nullptr) {
-      this->pop();
+    while (isEmpty() == false) {
+      pop();
     }
     this->capacity = 0;
   }
 
   // Return the number of nodes in a stack
-  int getSize() const override {
-    int size = 0;
-    Node<T> *node = head;
-    while (size < this->capacity) {
-      if (node == nullptr) {
-        break;
-      }
-      node = node->next;
-      size++;
-    }
-    return size;
-  }
+  int getSize() const override { return this->size; }
 
   bool isEmpty() const override { return getSize() == 0; }
 
@@ -280,6 +268,7 @@ class StackLinkedList : public Stack<T> {
       delete stack->next;
       stack->next = nullptr;
     }
+    this->size--;
     return value;
   }
 
@@ -294,6 +283,7 @@ class StackLinkedList : public Stack<T> {
       head = node;
     }
     stack = node;
+    this->size++;
   }
 
   Node<T> *getStack() const { return stack; }

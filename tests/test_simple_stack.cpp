@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -87,6 +88,30 @@ TEST(StackLinkedListTest, HandlesConstructor) {
   StackLinkedList<int> stack(10);
   EXPECT_EQ(stack.getCapacity(), 10);
   EXPECT_EQ(stack.getSize(), 0);
+}
+
+TEST(StackLinkedListTest, HandlesPushSize) {
+  int capacity = 10;
+  StackLinkedList<int> stack(capacity);
+  for (int pushed = 0; pushed < capacity; pushed++) {
+    stack.push(pushed);
+  }
+  EXPECT_EQ(stack.getCapacity(), capacity);
+  EXPECT_EQ(stack.getSize(), capacity);
+}
+
+TEST(StackLinkedListTest, HandlesPushPopSize) {
+  int capacity = 10;
+  StackLinkedList<int> stack(capacity);
+  for (int pushed = 0; pushed < capacity; pushed++) {
+    stack.push(pushed);
+  }
+  int num_pops = 5;
+  for (int pushed = 0; pushed < num_pops; pushed++) {
+    stack.pop();
+  }
+  EXPECT_EQ(stack.getCapacity(), capacity);
+  EXPECT_EQ(stack.getSize(), capacity - num_pops);
 }
 
 TEST(StackLinkedListTest, HandlesPushPopInteger) {
@@ -206,7 +231,7 @@ TEST(StackLinkedListTest, HandlesFullError) {
   EXPECT_THROW(stack.push(1), StackOverflowError);
 }
 
-TEST(StackLinkedListTest, HandlesCopyConstructor) {
+TEST(StackLinkedListTest, HandlesCopyConstructorStackCapacityAndSize) {
   StackLinkedList<int> s1(10);
   for (int i = 0; i < 10; i++) {
     s1.push(i);
@@ -214,6 +239,26 @@ TEST(StackLinkedListTest, HandlesCopyConstructor) {
   StackLinkedList<int> s2 = s1;
   EXPECT_EQ(s1.getCapacity(), s2.getCapacity());
   EXPECT_EQ(s1.getSize(), s2.getSize());
+}
+
+TEST(StackLinkedListTest, HandlesDeleteStack) {
+  int size = 10;
+  StackLinkedList<int> s1(size);
+  for (int i = 0; i < size; i++) {
+    s1.push(i);
+  }
+  s1.deleteStack();
+  EXPECT_TRUE(s1.isEmpty());
+  EXPECT_EQ(s1.getSize(), 0);
+  EXPECT_EQ(s1.getCapacity(), 0);
+}
+
+TEST(StackLinkedListTest, HandlesCopyConstructor) {
+  StackLinkedList<int> s1(10);
+  for (int i = 0; i < 10; i++) {
+    s1.push(i);
+  }
+  StackLinkedList<int> s2 = s1;
 
   const Node<int> *n1 = s1.getHead();
   const Node<int> *n2 = s2.getHead();
