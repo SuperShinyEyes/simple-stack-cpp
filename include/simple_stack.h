@@ -72,11 +72,11 @@ class Stack {
 };
 
 template <class T>
-class StackList : public Stack<T> {
+class StackArray : public Stack<T> {
   T *array;
 
  public:
-  StackList(int capacity) {
+  StackArray(int capacity) {
     if (!isValidCapacity(capacity)) {
       throw StackInvalidCapacityError(
           "Capacity must be greater than 0. You gave " +
@@ -87,7 +87,7 @@ class StackList : public Stack<T> {
   }
 
   // Copy constructor
-  StackList(const StackList &other) {
+  StackArray(const StackArray &other) {
     this->capacity = other.capacity;
     this->numberOfElements = other.numberOfElements;
     array = new T[this->capacity];
@@ -97,12 +97,12 @@ class StackList : public Stack<T> {
     }
   }
 
-  StackList &operator=(const StackList &other) {
+  StackArray &operator=(const StackArray &other) {
     if (this != &other) {
       clear();
 
       // Create a temporary copy-object.
-      StackList temp = other;
+      StackArray temp = other;
       std::swap(this->capacity, temp.capacity);
       std::swap(this->numberOfElements, temp.numberOfElements);
       std::swap(this->array, temp.array);
@@ -111,7 +111,7 @@ class StackList : public Stack<T> {
   }
 
   // Move constructor
-  StackList(StackList &&other) noexcept {
+  StackArray(StackArray &&other) noexcept {
     this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
     array = other.array;
@@ -122,7 +122,7 @@ class StackList : public Stack<T> {
   }
 
   // Move assignment
-  StackList &operator=(StackList &&other) noexcept {
+  StackArray &operator=(StackArray &&other) noexcept {
     if (this != &other) {
       clear();
 
@@ -133,7 +133,7 @@ class StackList : public Stack<T> {
     return *this;
   }
 
-  ~StackList() { clear(); }
+  ~StackArray() { clear(); }
 
   void clear() override {
     while (isEmpty() == false) {

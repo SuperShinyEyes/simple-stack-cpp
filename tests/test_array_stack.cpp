@@ -6,14 +6,14 @@
 
 #include "simple_stack.h"
 
-TEST(StackListTest, HandlesConstructor) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesConstructor) {
+  StackArray<int> stack(10);
   EXPECT_EQ(stack.getCapacity(), 10);
   EXPECT_TRUE(stack.isEmpty());
 }
 
-TEST(StackListTest, HandlesPushPop) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesPushPop) {
+  StackArray<int> stack(10);
   int popped;
   for (int pushed = 0; pushed < 10; pushed++) {
     stack.push(pushed);
@@ -22,31 +22,118 @@ TEST(StackListTest, HandlesPushPop) {
   }
 }
 
-TEST(StackListTest, HandlesPeek) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesPeek) {
+  StackArray<int> stack(10);
   for (int pushed = 0; pushed < 10; pushed++) {
     stack.push(pushed);
     EXPECT_EQ(stack.peek(), pushed);
   }
 }
 
-TEST(StackListTest, HandlesInvalidCapacityError) {
+TEST(StackArrayTest, HandlesPushPopInteger) {
+  StackArray<int> stack(10);
+  int popped;
+  for (int pushed = 0; pushed < 10; pushed++) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopFloat) {
+  StackArray<float> stack(10);
+  float popped;
+  for (float pushed = 0; pushed < 10; pushed++) {
+    stack.push(pushed / 1.0f);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopDouble) {
+  StackArray<double> stack(10);
+  double popped;
+  for (double pushed = 0; pushed < 10; pushed++) {
+    stack.push(pushed / 1.0);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopUInt) {
+  StackArray<uint> stack(10);
+  uint popped;
+  for (uint pushed = 0; pushed < 10; pushed++) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopChar) {
+  StackArray<char> stack(10);
+  char popped;
+  std::vector<char> items = {'a', 'b', 'c', 'd', 'e', 'f', 'g'};
+  for (char pushed : items) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopConstChar) {
+  StackArray<const char *> stack(10);
+  const char *popped;
+  std::vector<const char *> items = {"school", "boy", "girl"};
+  for (const char *pushed : items) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesPushPopVectorInt) {
+  StackArray<std::vector<int>> stack(10);
+  std::vector<int> popped;
+  std::vector<std::vector<int>> items = {{0, 1, 2, 3}, {2, 3, 4}, {9}};
+  for (std::vector<int> pushed : items) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+int addOne(int a) { return a + 1; }
+int addTwo(int a) { return a + 2; }
+TEST(StackArrayTest, HandlesPushPopFunctionPointers) {
+  typedef int (*FunctionPointerType)(int);
+  StackArray<FunctionPointerType> stack(10);
+  FunctionPointerType popped;
+  std::vector<FunctionPointerType> items = {addOne, addTwo};
+  for (FunctionPointerType pushed : items) {
+    stack.push(pushed);
+    popped = stack.pop();
+    EXPECT_EQ(pushed, popped);
+  }
+}
+
+TEST(StackArrayTest, HandlesInvalidCapacityError) {
   std::vector<int> stack_capacities = {-1000, -10, -1, 0};
   for (int capacity : stack_capacities) {
-    EXPECT_THROW(StackList<int> stack(capacity), StackInvalidCapacityError);
+    EXPECT_THROW(StackArray<int> stack(capacity), StackInvalidCapacityError);
   }
 }
 
-TEST(StackListTest, HandlesValidSize) {
+TEST(StackArrayTest, HandlesValidSize) {
   std::vector<int> stack_capacities = {1000, 10, 1};
   for (int capacity : stack_capacities) {
-    EXPECT_NO_THROW(StackList<int> stack(capacity));
+    EXPECT_NO_THROW(StackArray<int> stack(capacity));
   }
 }
 
-TEST(StackListTest, HandlesFullCapacity) {
+TEST(StackArrayTest, HandlesFullCapacity) {
   int capacity = 100;
-  StackList<int> stack(capacity);
+  StackArray<int> stack(capacity);
   for (int pushed = 0; pushed < capacity; pushed++) {
     stack.push(pushed);
   }
@@ -54,47 +141,47 @@ TEST(StackListTest, HandlesFullCapacity) {
   EXPECT_EQ(stack.getNumberOfElements(), capacity);
 }
 
-TEST(StackListTest, HandlesEmptyPopError) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesEmptyPopError) {
+  StackArray<int> stack(10);
   EXPECT_THROW(stack.pop(), StackUnderflowError);
   stack.push(1);
   EXPECT_NO_THROW(stack.pop());
   EXPECT_THROW(stack.pop(), StackUnderflowError);
 }
 
-TEST(StackListTest, HandlesEmptyPeekError) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesEmptyPeekError) {
+  StackArray<int> stack(10);
   EXPECT_THROW(stack.peek(), StackUnderflowError);
   stack.push(1);
   EXPECT_NO_THROW(stack.peek());
 }
 
-TEST(StackListTest, HandlesFullError) {
-  StackList<int> stack(10);
+TEST(StackArrayTest, HandlesFullError) {
+  StackArray<int> stack(10);
   for (int i = 0; i < 10; i++) {
     EXPECT_NO_THROW(stack.push(i));
   }
   EXPECT_THROW(stack.push(1), StackOverflowError);
 }
 
-TEST(StackListTest, HandlesCopyConstructor) {
-  StackList<int> s1(10);
+TEST(StackArrayTest, HandlesCopyConstructor) {
+  StackArray<int> s1(10);
   for (int i = 0; i < 10; i++) {
     s1.push(i);
   }
-  StackList<int> s2 = s1;
+  StackArray<int> s2 = s1;
   EXPECT_EQ(s1.getNumberOfElements(), s2.getNumberOfElements());
   for (int i = 0; i < 10; i++) {
     EXPECT_EQ(s1.pop(), s2.pop());
   }
 }
 
-TEST(StackListTest, HandlesCopyAssignment) {
-  StackList<int> s1(10);
+TEST(StackArrayTest, HandlesCopyAssignment) {
+  StackArray<int> s1(10);
   for (int i = 0; i < 10; i++) {
     s1.push(i);
   }
-  StackList<int> s2(1);
+  StackArray<int> s2(1);
   s2 = s1;
   EXPECT_EQ(s1.getNumberOfElements(), s2.getNumberOfElements());
   for (int i = 0; i < 10; i++) {
@@ -102,13 +189,13 @@ TEST(StackListTest, HandlesCopyAssignment) {
   }
 }
 
-TEST(StackListTest, HandlesMoveConstructor) {
+TEST(StackArrayTest, HandlesMoveConstructor) {
   int size = 10;
-  StackList<int> s1(size);
+  StackArray<int> s1(size);
   for (int i = 0; i < size; i++) {
     s1.push(i);
   }
-  StackList<int> s2 = std::move(s1);
+  StackArray<int> s2 = std::move(s1);
   EXPECT_EQ(s1.getNumberOfElements(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
   EXPECT_EQ(s1.getArray(), nullptr);
@@ -121,13 +208,13 @@ TEST(StackListTest, HandlesMoveConstructor) {
   }
 }
 
-TEST(StackListTest, HandlesMoveAssignment) {
+TEST(StackArrayTest, HandlesMoveAssignment) {
   int size = 10;
-  StackList<int> s1(size);
+  StackArray<int> s1(size);
   for (int i = 0; i < size; i++) {
     s1.push(i);
   }
-  StackList<int> s2(1);
+  StackArray<int> s2(1);
   s2 = std::move(s1);
   EXPECT_EQ(s1.getNumberOfElements(), 0);
   EXPECT_EQ(s1.getCapacity(), 0);
@@ -143,9 +230,9 @@ TEST(StackListTest, HandlesMoveAssignment) {
 
 // Test large stack capacity
 
-// TEST(StackListTest, HandlesPushPopMany) {
+// TEST(StackArrayTest, HandlesPushPopMany) {
 //   int capacity = INT_MAX;
-//   StackList<int> stack(capacity);
+//   StackArray<int> stack(capacity);
 //   for (int pushed = 0; pushed < capacity; pushed++) {
 //     stack.push(pushed);
 //     EXPECT_EQ(stack.peek(), pushed);
