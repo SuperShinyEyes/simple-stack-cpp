@@ -56,7 +56,6 @@ class Stack {
   // During the instantiation, a user defines the maximum number items a stack
   // could hold.
   int capacity;
-  //
   int numberOfElements = 0;
 
  public:
@@ -156,8 +155,8 @@ template <class T>
 class Node {
  public:
   T value;
-  Node *next;
-  Node(T value, Node *next) : value(value), next(next) {}
+  Node *next = nullptr;
+  Node(T value) : value(value) {}
 };
 
 template <class T>
@@ -183,14 +182,14 @@ class StackLinkedList : public Stack<T> {
     }
     // First, copy the top.
     Node<T> *otherNode = other.top;
-    top = new Node<T>(otherNode->value, nullptr);
+    top = new Node<T>(otherNode->value);
     this->numberOfElements++;
 
     // Then, copy the remaining nodes.
     Node<T> *thisNode = top;
     otherNode = otherNode->next;
     while (otherNode != nullptr) {
-      thisNode->next = new Node<T>(otherNode->value, nullptr);
+      thisNode->next = new Node<T>(otherNode->value);
       thisNode = thisNode->next;
       otherNode = otherNode->next;
       this->numberOfElements++;
@@ -277,7 +276,7 @@ class StackLinkedList : public Stack<T> {
           "is " +
           std::to_string(this->capacity));
     }
-    Node<T> *node = new Node<T>(value, top);
+    Node<T> *node = new Node<T>(value);
     node->next = top;
     top = node;
     this->numberOfElements++;
