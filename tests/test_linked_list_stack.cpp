@@ -7,10 +7,6 @@
 
 #include "simple_stack.h"
 
-TEST(StackLinkedListTest, HandlesSmartPointer) {
-  std::unique_ptr<int> score;
-  EXPECT_EQ(score, nullptr);
-}
 TEST(StackLinkedListTest, HandlesConstructor) {
   StackLinkedList<int> stack(10);
   EXPECT_EQ(stack.getCapacity(), 10);
