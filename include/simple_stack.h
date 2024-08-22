@@ -98,6 +98,7 @@ class StackArray : public Stack<T> {
     }
   }
 
+  // Copy assignment
   StackArray &operator=(const StackArray &other) {
     if (this != &other) {
       clear();
@@ -200,7 +201,7 @@ template <class T>
 class Node {
  public:
   T value;
-  Node *next = nullptr;
+  std::unique_ptr<Node> next;
   Node(T value) : value(value) {}
 };
 
@@ -208,7 +209,7 @@ class Node {
 template <class T>
 class StackLinkedList : public Stack<T> {
   // Holds the latest/top item in a stack.
-  Node<T> *top = nullptr;
+  std::unique_ptr<Node<T>> top;
 
  public:
   StackLinkedList(int capacity) {
@@ -227,17 +228,17 @@ class StackLinkedList : public Stack<T> {
       return;
     }
     // First, copy the top.
-    Node<T> *otherNode = other.top;
-    top = new Node<T>(otherNode->value);
+    Node<T> *otherNode = other.top.get();
+    top = std::make_unique<Node<T>>(otherNode->value);
     this->numberOfElements++;
 
     // Then, copy the remaining nodes in the same sequence.
-    Node<T> *thisNode = top;
-    otherNode = otherNode->next;
+    Node<T> *thisNode = top.get();
+    otherNode = otherNode->next.get();
     while (otherNode != nullptr) {
-      thisNode->next = new Node<T>(otherNode->value);
-      thisNode = thisNode->next;
-      otherNode = otherNode->next;
+      thisNode->next = std::make_unique<Node<T>>(otherNode->value);
+      thisNode = thisNode->next.get();
+      otherNode = otherNode->next.get();
       this->numberOfElements++;
     }
   }
@@ -263,7 +264,7 @@ class StackLinkedList : public Stack<T> {
   StackLinkedList(StackLinkedList &&other) noexcept {
     this->capacity = other.capacity;
     this->numberOfElements = other.numberOfElements;
-    top = other.top;
+    top = std::move(other.top);
 
     other.capacity = 0;
     other.numberOfElements = 0;
@@ -314,10 +315,10 @@ class StackLinkedList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    Node<T> *node = top;
+    Node<T> *node = top.get();
     T value = node->value;
-    top = top->next;
-    delete node;
+    top = std::move(top->next);
+    node = nullptr;
     this->numberOfElements--;
     return value;
   }
@@ -329,13 +330,13 @@ class StackLinkedList : public Stack<T> {
           "is " +
           std::to_string(this->capacity));
     }
-    Node<T> *node = new Node<T>(value);
-    node->next = top;
-    top = node;
+    std::unique_ptr<Node<T>> node = std::make_unique<Node<T>>(value);
+    node->next = std::move(top);
+    top = std::move(node);
     this->numberOfElements++;
   }
 
-  Node<T> *getTop() const { return top; }
+  Node<T> *getTop() const { return top.get(); }
 };
 
 #endif  // SIMPLE_STACK_H

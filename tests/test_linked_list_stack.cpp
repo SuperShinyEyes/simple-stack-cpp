@@ -1,11 +1,16 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "simple_stack.h"
 
+TEST(StackLinkedListTest, HandlesSmartPointer) {
+  std::unique_ptr<int> score;
+  EXPECT_EQ(score, nullptr);
+}
 TEST(StackLinkedListTest, HandlesConstructor) {
   StackLinkedList<int> stack(10);
   EXPECT_EQ(stack.getCapacity(), 10);
@@ -216,8 +221,8 @@ TEST(StackLinkedListTest, HandlesCopyConstructor) {
     EXPECT_NE(n1, n2);
     // Values should be same
     EXPECT_EQ(n1->value, n2->value);
-    n1 = n1->next;
-    n2 = n2->next;
+    n1 = n1->next.get();
+    n2 = n2->next.get();
   }
 
   for (int i = 0; i < 10; i++) {
@@ -250,8 +255,8 @@ TEST(StackLinkedListTest, HandlesCopyAssignment) {
     EXPECT_NE(n1, n2);
     // Values should be same
     EXPECT_EQ(n1->value, n2->value);
-    n1 = n1->next;
-    n2 = n2->next;
+    n1 = n1->next.get();
+    n2 = n2->next.get();
   }
 
   for (int i = 0; i < 10; i++) {
