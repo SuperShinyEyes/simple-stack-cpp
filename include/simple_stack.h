@@ -1,5 +1,6 @@
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -73,7 +74,7 @@ class Stack {
 
 template <class T>
 class StackArray : public Stack<T> {
-  T *array;
+  std::unique_ptr<T[]> array;
 
  public:
   StackArray(int capacity) {
@@ -83,14 +84,14 @@ class StackArray : public Stack<T> {
           std::to_string(capacity));
     }
     this->capacity = capacity;
-    array = new T[capacity];
+    array = std::make_unique<T[]>(capacity);
   }
 
   // Copy constructor
   StackArray(const StackArray &other) {
     this->capacity = other.capacity;
     this->numberOfElements = other.numberOfElements;
-    array = new T[this->capacity];
+    array = std::make_unique<T[]>(this->capacity);
 
     for (int i = 0; i < this->numberOfElements; i++) {
       array[i] = other.array[i];
@@ -114,7 +115,7 @@ class StackArray : public Stack<T> {
   StackArray(StackArray &&other) noexcept {
     this->numberOfElements = other.numberOfElements;
     this->capacity = other.capacity;
-    array = other.array;
+    array = std::move(other.array);
 
     other.array = nullptr;
     other.numberOfElements = 0;
@@ -139,7 +140,7 @@ class StackArray : public Stack<T> {
     while (isEmpty() == false) {
       pop();
     }
-    delete[] array;
+    // delete[] array;
     array = nullptr;
     this->capacity = 0;
   }
@@ -189,7 +190,7 @@ class StackArray : public Stack<T> {
   }
   int getNumberOfElements() const override { return this->numberOfElements; }
 
-  T *getArray() const { return array; }
+  T *getArray() const { return array.get(); }
 };
 
 // A container of each stack item for the linked list implementation,
