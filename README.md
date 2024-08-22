@@ -1,5 +1,15 @@
-# simple-stack-cpp
+# Simple Stack
 
+## How to run
+```terminal
+# Run basic tests
+> ./run.sh
+
+# Run all tests. This may take longer than 5 minutes
+> ./run.sh -a
+```
+
+## Features
 - ✅ Generic implementation using class template in C++. 
 - ✅ Supports push and pop operations. Pop can either return the popped value or simply remove the top item; if removing only the top item, a separate method for accessing the top object separately must also be provided. 
 - ✅ Has a fixed capacity, which can be defined with a runtime value. For simplicity, the capacity can be set when the stack is created; the stack does not need to support arbitrary capacity changes after it has been initialized. 

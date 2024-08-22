@@ -301,16 +301,20 @@ TEST(StackLinkedListTest, HandlesMoveAssignment) {
   }
 }
 
-// TEST(StackLinkedListTest, HandlesPushPopMany) {
-//   int capacity = INT_MAX;
-//   StackLinkedList<int> stack(capacity);
-//   for (int pushed = 0; pushed < capacity; pushed++) {
-//     stack.push(pushed);
-//     EXPECT_EQ(stack.peek(), pushed);
-//   }
-//   EXPECT_TRUE(stack.isFull());
-//   EXPECT_EQ(stack.getNumberOfElements(), capacity);
-// }
+#ifdef ENABLE_TIME_CONSUMING_TESTS
+
+TEST(StackLinkedListTest, HandlesPushPopMany) {
+  int capacity = INT_MAX;
+  StackLinkedList<int> stack(capacity);
+  for (int pushed = 0; pushed < capacity; pushed++) {
+    stack.push(pushed);
+    EXPECT_EQ(stack.peek(), pushed);
+  }
+  EXPECT_TRUE(stack.isFull());
+  EXPECT_EQ(stack.getNumberOfElements(), capacity);
+}
+
+#endif
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

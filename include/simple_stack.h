@@ -163,7 +163,7 @@ class StackArray : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't peek an empty stack.");
     }
-    return *(array + this->numberOfElements - 1);
+    return array[this->numberOfElements - 1];
   }
 
   // Return and remove the top item
@@ -171,7 +171,7 @@ class StackArray : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    T value = *(array + this->numberOfElements - 1);  // FIXME: This is
+    T value = array[this->numberOfElements - 1];  // FIXME: This is
     this->numberOfElements--;
     return value;
   }
@@ -184,7 +184,7 @@ class StackArray : public Stack<T> {
           "stack is " +
           std::to_string(this->capacity));
     }
-    *(array + this->numberOfElements) = value;
+    array[this->numberOfElements] = value;
     this->numberOfElements++;
   }
   int getNumberOfElements() const override { return this->numberOfElements; }

@@ -1,5 +1,11 @@
 enable_testing()
 
+option(ENABLE_TIME_CONSUMING_TESTS "Enable time-consuming tests" OFF)
+
+if(ENABLE_TIME_CONSUMING_TESTS)
+    add_definitions(-DENABLE_TIME_CONSUMING_TESTS)
+endif()
+
 # Find the GoogleTest package
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
