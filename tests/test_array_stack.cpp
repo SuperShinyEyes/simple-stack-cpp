@@ -228,6 +228,45 @@ TEST(StackArrayTest, HandlesMoveAssignment) {
   }
 }
 
+// Test large elements
+
+TEST(StackArrayTest, HandlesLargeSizeIntVector) {
+  // Each vector is size of 400 MB.
+  int element_size = 100000000;
+  // 20 such vectors -> 8 GB
+  int capacity = 20;
+  StackArray<std::vector<int>> stack(capacity);
+  for (int i = 0; i < capacity; i++) {
+    stack.push(std::vector<int>(element_size));
+  }
+  EXPECT_TRUE(stack.isFull());
+  EXPECT_EQ(stack.getNumberOfElements(), capacity);
+  EXPECT_EQ(stack.peek().size(), element_size);
+
+  for (int i = 0; i < capacity; i++) {
+    EXPECT_EQ(stack.pop().size(), element_size);
+  }
+  EXPECT_TRUE(stack.isEmpty());
+}
+
+// Test mixed size of elements
+TEST(StackArrayTest, HandlesMixedSizeIntVector) {
+  // This test will consume 10GB of RAM.
+  int capacity = 50000;
+  StackArray<std::vector<int>> stack(capacity);
+  for (int i = 0; i < capacity; i++) {
+    stack.push(std::vector<int>(i));
+  }
+  EXPECT_TRUE(stack.isFull());
+  EXPECT_EQ(stack.getNumberOfElements(), capacity);
+  EXPECT_EQ(stack.peek().size(), capacity - 1);
+
+  for (int i = 0; i < capacity; i++) {
+    EXPECT_EQ(stack.pop().size(), capacity - i - 1);
+  }
+  EXPECT_TRUE(stack.isEmpty());
+}
+
 // Test large stack capacity
 #ifdef ENABLE_TIME_CONSUMING_TESTS
 

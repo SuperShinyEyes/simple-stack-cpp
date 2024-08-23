@@ -21,7 +21,7 @@
     3. `StackFullError`
 - ✅ For the stack code itself, utilities from the standard library can be used, but containers that do most of the heavy lifting for you (e.g., `std::vector`, `std::deque`, `std::list`) should not be used to implement the stack; we still want to see what you can write on your own. 
 - ✅ Relevant tests should also be provided that validate stack operations work as intended and that appropriate values or errors are returned depending on runtime conditions. Test code can use any elements of the standard library or third-party libraries, including test frameworks such as GoogleTest, that may help with implementing or running tests. 
-    - Large elements
+    - ✅ Large elements
     - Mixed element sizes
     - ✅ Many elements
     - ✅ Various data types
