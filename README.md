@@ -18,7 +18,7 @@ This is my hobby project to learn C++ 14.
 - 2 implementation using class template in C++. 
     1. Linear array
     2. Singly linked list
-- Support operations 
+- Supported operations 
     - push
     - pop
     - peek
