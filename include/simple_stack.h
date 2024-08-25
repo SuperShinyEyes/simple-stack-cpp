@@ -315,7 +315,7 @@ class StackLinkedList : public Stack<T> {
     if (isEmpty()) {
       throw StackUnderflowError("You can't pop an empty stack.");
     }
-    Node<T> *node = top.get();
+    Node<T> *node = getTop();
     T value = node->value;
     top = std::move(top->next);
     node = nullptr;

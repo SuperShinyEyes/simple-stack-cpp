@@ -228,8 +228,8 @@ TEST(StackArrayTest, HandlesMoveAssignment) {
   }
 }
 
+#ifdef ENABLE_TIME_CONSUMING_TESTS
 // Test large elements
-
 TEST(StackArrayTest, HandlesLargeSizeIntVector) {
   // Each vector is size of 400 MB.
   int element_size = 100000000;
@@ -268,8 +268,6 @@ TEST(StackArrayTest, HandlesMixedSizeIntVector) {
 }
 
 // Test large stack capacity
-#ifdef ENABLE_TIME_CONSUMING_TESTS
-
 TEST(StackArrayTest, HandlesPushPopMany) {
   int capacity = INT_MAX;
   StackArray<int> stack(capacity);
